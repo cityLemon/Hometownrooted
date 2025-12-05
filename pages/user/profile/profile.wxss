@@ -1,0 +1,200 @@
+/* profile.wxss - 个人信息样式 */
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 编辑模式按钮 */
+.edit-mode-buttons {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 保存/取消按钮 */
+.save-cancel-buttons {
+  display: flex;
+  margin-bottom: 30rpx;
+}
+
+/* 头像区域样式 */
+.avatar-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40rpx;
+}
+
+/* 头像容器样式 */
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* 头像样式 */
+.avatar {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--border-color);
+  margin-bottom: 20rpx;
+  background-color: var(--bg-primary);
+}
+
+/* 头像提示样式 */
+.avatar-hint {
+  font-weight: 500;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 表单样式 */
+.form-item {
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-label {
+  margin-bottom: 10rpx;
+}
+
+.form-value {
+  font-size: 32rpx;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  padding: 20rpx;
+  border-radius: 8rpx;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 80rpx;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 20rpx;
+  border: 2rpx solid var(--border-color);
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  box-sizing: border-box;
+  min-height: 80rpx;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.form-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* 家庭成员样式 */
+.family-member-item {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.family-member-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.family-member-name {
+  margin-bottom: 10rpx;
+}
+
+.family-member-relation {
+  margin-bottom: 5rpx;
+}
+
+/* 账户设置样式 */
+.setting-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+.setting-icon {
+  font-size: 40rpx;
+  margin-right: 30rpx;
+}
+
+.setting-info {
+  flex: 1;
+}
+
+.setting-name {
+  margin-bottom: 10rpx;
+}
+
+.setting-arrow {
+  font-size: 32rpx;
+  color: var(--text-tertiary);
+}
+
+/* 空状态样式 */
+.empty-text {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .card {
+    padding: 20rpx;
+  }
+  
+  .avatar {
+    width: 180rpx;
+    height: 180rpx;
+  }
+  
+  .setting-item {
+    padding: 25rpx;
+  }
+  
+  .setting-icon {
+    font-size: 36rpx;
+    margin-right: 25rpx;
+  }
+}

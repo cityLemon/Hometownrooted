@@ -1,0 +1,209 @@
+/**monitoring.wxss - 健康监测数据样式**/
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 设备连接状态样式 */
+.device-status {
+  display: flex;
+  align-items: center;
+}
+
+.device-status-content {
+  flex: 1;
+}
+
+.device-status-icon {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.device-status-info {
+  margin-bottom: 10rpx;
+}
+
+/* 实时健康数据网格 */
+.real-time-data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  margin-bottom: 40rpx;
+}
+
+/* 数据卡片样式 */
+.data-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  min-height: 250rpx;
+}
+
+.data-card:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+.data-label {
+  margin-bottom: 20rpx;
+}
+
+.data-value {
+  margin-bottom: 10rpx;
+}
+
+.data-unit {
+  margin-bottom: 20rpx;
+}
+
+.data-status {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+/* 时间范围切换样式 */
+.time-range-tabs {
+  display: flex;
+  margin-bottom: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.time-range-tab {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.time-range-tab:active {
+  opacity: 0.8;
+}
+
+/* 图表容器样式 */
+.chart-container {
+  padding: 30rpx;
+}
+
+.chart-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 图表占位符 */
+.chart-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+  background-color: var(--bg-secondary);
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+}
+
+.chart-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.chart-text {
+  margin-bottom: 10rpx;
+}
+
+/* 历史数据列表样式 */
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.history-date {
+  flex: 1;
+}
+
+.history-value {
+  flex: 1;
+  text-align: center;
+}
+
+.history-status {
+  flex: 1;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* 操作按钮样式 */
+.action-buttons {
+  display: flex;
+  margin-bottom: 40rpx;
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .card {
+    padding: 20rpx;
+  }
+  
+  .real-time-data-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .data-card {
+    min-height: 200rpx;
+  }
+  
+  .history-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .history-date,
+  .history-value,
+  .history-status {
+    text-align: left;
+    margin-bottom: 10rpx;
+  }
+}

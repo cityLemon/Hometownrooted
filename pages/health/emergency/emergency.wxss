@@ -1,0 +1,223 @@
+/**emergency.wxss - 一键呼救样式**/
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+/* 位置信息样式 */
+.location-info {
+  margin-bottom: 10rpx;
+  word-break: break-all;
+}
+
+.location-coords {
+  margin-bottom: 20rpx;
+}
+
+/* 紧急呼救区域 */
+.emergency-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+}
+
+.emergency-title {
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+/* 紧急按钮容器 */
+.emergency-button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+/* 紧急按钮样式 */
+.emergency-btn {
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+  background-color: var(--error-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  font-size: 48rpx;
+  font-weight: 700;
+  animation: pulse 1.5s infinite;
+  border: none;
+  outline: none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 34, 45, 0.4);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 60rpx rgba(245, 34, 45, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 34, 45, 0);
+  }
+}
+
+/* 紧急提示 */
+.emergency-hint {
+  text-align: center;
+  margin-top: 20rpx;
+}
+
+/* 倒计时样式 */
+.countdown-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.countdown-number {
+  font-size: 120rpx;
+  font-weight: 700;
+  color: var(--error-color);
+  margin-bottom: 20rpx;
+}
+
+.countdown-text {
+  font-size: 36rpx;
+  color: var(--text-secondary);
+}
+
+/* 成功/失败状态样式 */
+.success-icon,
+.failed-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.success-text {
+  color: var(--success-color);
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.failed-text {
+  color: var(--error-color);
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.success-hint {
+  text-align: center;
+}
+
+/* 自动拨号开关样式 */
+.auto-call-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.auto-call-text {
+  margin-bottom: 10rpx;
+}
+
+.auto-call-desc {
+  font-size: 28rpx;
+}
+
+.auto-call-switch {
+  transform: scale(1.5);
+}
+
+/* 紧急联系人样式 */
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.contact-info {
+  flex: 1;
+}
+
+.contact-name {
+  margin-bottom: 10rpx;
+}
+
+.contact-relation {
+  margin-bottom: 5rpx;
+}
+
+/* 空状态样式 */
+.empty-text {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .card {
+    padding: 20rpx;
+  }
+  
+  .emergency-btn {
+    width: 250rpx;
+    height: 250rpx;
+    font-size: 40rpx;
+  }
+  
+  .countdown-number {
+    font-size: 100rpx;
+  }
+}

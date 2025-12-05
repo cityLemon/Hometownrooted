@@ -1,0 +1,300 @@
+/* adoption.wxss - 爱心认领样式 */
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 筛选状态切换样式 */
+.filter-tabs {
+  display: flex;
+  margin-bottom: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-tab {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filter-tab:active {
+  opacity: 0.8;
+}
+
+/* 需求列表样式 */
+.need-list {
+  margin-bottom: 40rpx;
+}
+
+/* 需求项样式 */
+.need-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.need-item:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+/* 需求图片样式 */
+.need-image {
+  width: 150rpx;
+  height: 150rpx;
+  margin-right: 30rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.need-image image {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 8rpx;
+}
+
+/* 需求信息样式 */
+.need-info {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+/* 需求头部样式 */
+.need-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+/* 需求状态样式 */
+.need-status {
+  font-weight: 700;
+  font-size: 28rpx;
+}
+
+/* 需求基本信息样式 */
+.need-basic-info {
+  margin-bottom: 10rpx;
+}
+
+/* 需求描述样式 */
+.need-description {
+  margin-bottom: 20rpx;
+}
+
+/* 需求标签样式 */
+.need-tags {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.need-tag {
+  padding: 8rpx 16rpx;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  margin-right: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+/* 需求操作按钮样式 */
+.need-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 认领记录列表样式 */
+.record-list {
+  margin-bottom: 40rpx;
+}
+
+/* 认领记录项样式 */
+.record-item {
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.record-item:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+/* 认领记录信息样式 */
+.record-info {
+  margin-bottom: 20rpx;
+}
+
+/* 认领记录老人姓名样式 */
+.record-elder {
+  margin-bottom: 10rpx;
+}
+
+/* 认领记录时间样式 */
+.record-time {
+  margin-bottom: 10rpx;
+}
+
+/* 认领记录状态样式 */
+.record-status {
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+/* 空状态样式 */
+.empty-text {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 模态框样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  width: 90%;
+  max-width: 600rpx;
+}
+
+.modal-content {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-lg);
+  padding: 40rpx;
+}
+
+.modal-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.modal-body {
+  margin-bottom: 30rpx;
+}
+
+.modal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.modal-item-label {
+  font-weight: 500;
+  margin-right: 20rpx;
+  min-width: 120rpx;
+}
+
+.modal-confirm-text {
+  margin-top: 30rpx;
+  text-align: center;
+  font-weight: 700;
+}
+
+.modal-footer {
+  display: flex;
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .filter-tab {
+    padding: 15rpx;
+    font-size: 30rpx;
+  }
+  
+  .need-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .need-image {
+    margin-bottom: 20rpx;
+  }
+  
+  .need-info {
+    margin-right: 0;
+    margin-bottom: 20rpx;
+  }
+  
+  .need-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    flex: 1;
+  }
+  
+  .modal-container {
+    width: 95%;
+  }
+  
+  .modal-content {
+    padding: 30rpx;
+  }
+  
+  .modal-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .modal-item-label {
+    margin-bottom: 10rpx;
+  }
+}

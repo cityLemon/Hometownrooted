@@ -1,0 +1,137 @@
+<!-- adoption.wxml - 爱心认领 -->
+<page-meta>
+  <navigation-bar title="爱心认领"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 筛选状态 -->
+  <view class="filter-tabs">
+    <view 
+      class="filter-tab" 
+      wx:for="[{value: 'all', label: '全部'}, {value: 'pending', label: '待认领'}, {value: 'adopted', label: '已认领'}, {value: 'completed', label: '已完成'}]" 
+      wx:key="value"
+      data-status="{{item.value}}"
+      bindtap="switchFilterStatus"
+      style="background-color: {{filterStatus === item.value ? 'var(--primary-color)' : 'var(--bg-tertiary)'}}; color: {{filterStatus === item.value ? 'white' : 'var(--text-primary)'}};"
+    >
+      {{item.label}}
+    </view>
+  </view>
+  
+  <!-- 爱心认领需求列表 -->
+  <view class="section-title font-xl font-bold text-primary">爱心认领需求</view>
+  <view class="need-list">
+    <view 
+      wx:for="{{filteredAdoptionNeeds}}" 
+      wx:key="id"
+      class="need-item aging-friendly"
+    >
+      <view class="need-image">
+        <image src="{{item.image}}" mode="aspectFit"></image>
+      </view>
+      <view class="need-info">
+        <view class="need-header">
+          <view class="need-name font-lg font-bold text-primary">{{item.name}}</view>
+          <view class="need-status" style="color: {{item.status === 'pending' ? '#faad14' : (item.status === 'adopted' ? '#52c41a' : '#1890ff')}};">
+            {{item.status === 'pending' ? '待认领' : (item.status === 'adopted' ? '已认领' : '已完成')}}
+          </view>
+        </view>
+        <view class="need-basic-info font-sm text-secondary">
+          {{item.age}}岁 {{item.gender}} | {{item.address}}
+        </view>
+        <view class="need-description font-sm text-primary">
+          {{item.description}}
+        </view>
+        <view class="need-tags">
+          <view class="need-tag" wx:for="{{item.needs}}" wx:key="index">{{item}}</view>
+        </view>
+      </view>
+      <view class="need-actions">
+        <button 
+          class="btn btn-primary font-lg"
+          bindtap="viewNeedDetail"
+          data-need-id="{{item.id}}"
+          style="margin-bottom: 20rpx;"
+        >
+          查看详情
+        </button>
+        <button 
+          class="btn btn-secondary font-lg"
+          bindtap="openAdoptionModal"
+          data-id="{{item.id}}"
+          disabled="{{item.status !== 'pending'}}"
+        >
+          {{item.status === 'pending' ? '爱心认领' : '已认领'}}
+        </button>
+      </view>
+    </view>
+    <view wx:if="{{filteredAdoptionNeeds.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无相关认领需求</view>
+    </view>
+  </view>
+
+  <!-- 认领记录 -->
+  <view class="section-title font-xl font-bold text-primary">我的认领记录</view>
+  <view class="record-list">
+    <view 
+      wx:for="{{adoptionRecords}}" 
+      wx:key="id"
+      class="record-item aging-friendly"
+    >
+      <view class="record-info">
+        <view class="record-elder font-lg font-bold text-primary">爱心认领：{{item.elderName}}</view>
+        <view class="record-time font-sm text-secondary">{{item.adoptionTime}}</view>
+        <view class="record-status" style="color: {{item.status === 'adopted' ? '#52c41a' : (item.status === 'pending' ? '#faad14' : '#1890ff')}};">
+          {{item.status === 'pending' ? '待审核' : (item.status === 'adopted' ? '已认领' : '已完成')}}
+        </view>
+      </view>
+      <view class="record-adopter font-sm text-secondary">
+        认领人：{{item.adopterName}}
+      </view>
+    </view>
+    <view wx:if="{{adoptionRecords.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无认领记录</view>
+    </view>
+  </view>
+
+  <!-- 认领弹窗 -->
+  <view class="modal-mask" wx:if="{{showAdoptionModal}}"></view>
+  <view class="modal-container" wx:if="{{showAdoptionModal}}">
+    <view class="modal-content">
+      <view class="modal-title font-xl font-bold text-primary">爱心认领确认</view>
+      <view class="modal-body">
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">老人姓名</view>
+          <view class="modal-item-value font-lg font-medium text-primary">{{selectedNeed.name}}</view>
+        </view>
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">需求描述</view>
+          <view class="modal-item-value font-lg text-secondary">{{selectedNeed.description}}</view>
+        </view>
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">具体需求</view>
+          <view class="modal-item-value font-lg text-secondary">{{selectedNeed.needs.join(', ')}}</view>
+        </view>
+        <view class="modal-confirm-text font-lg text-primary">
+          确认要认领该老人的帮扶需求吗？
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button 
+          class="btn btn-secondary font-lg"
+          bindtap="closeAdoptionModal"
+          style="margin-right: 20rpx; flex: 1;"
+        >
+          取消
+        </button>
+        <button 
+          class="btn btn-primary font-lg"
+          bindtap="confirmAdoption"
+          style="flex: 1;"
+        >
+          确认认领
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

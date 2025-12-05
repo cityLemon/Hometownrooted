@@ -1,0 +1,165 @@
+<!-- profile.wxml - 个人信息 -->
+<page-meta>
+  <navigation-bar title="个人信息"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 编辑模式按钮 -->
+  <view class="edit-mode-buttons" wx:if="{{!editMode}}">
+    <button 
+      class="btn btn-primary btn-large font-lg font-bold"
+      bindtap="enterEditMode"
+    >
+      编辑信息
+    </button>
+  </view>
+
+  <!-- 保存/取消按钮 -->
+  <view class="save-cancel-buttons" wx:if="{{editMode}}">
+    <button 
+      class="btn btn-primary btn-large font-lg font-bold"
+      bindtap="saveEdit"
+      style="margin-right: 20rpx; flex: 1;"
+    >
+      保存
+    </button>
+    <button 
+      class="btn btn-secondary btn-large font-lg font-bold"
+      bindtap="cancelEdit"
+      style="flex: 1;"
+    >
+      取消
+    </button>
+  </view>
+
+  <!-- 用户头像 -->
+  <view class="avatar-section">
+    <view class="avatar-container" bindtap="chooseAvatar">
+      <image src="{{editMode ? tempUserInfo.avatarUrl : userInfo.avatarUrl}}" mode="aspectFit" class="avatar"></image>
+      <view class="avatar-hint font-lg text-secondary">
+        {{editMode ? '点击更换头像' : '点击查看头像'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">基本信息</view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">姓名</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{userInfo.name}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempUserInfo.name}}"
+        placeholder="请输入姓名"
+        data-field="name"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">电话</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{userInfo.phone}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempUserInfo.phone}}"
+        placeholder="请输入电话"
+        type="number"
+        data-field="phone"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">性别</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{userInfo.gender}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempUserInfo.gender}}"
+        placeholder="请输入性别"
+        data-field="gender"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">年龄</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{userInfo.age}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempUserInfo.age}}"
+        placeholder="请输入年龄"
+        type="number"
+        data-field="age"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">地址</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{userInfo.address}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempUserInfo.address}}"
+        placeholder="请输入地址"
+        data-field="address"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">角色</view>
+      <view class="form-value" wx:if="{{!editMode}}">
+        {{userInfo.role === 'elder' ? '老人' : (userInfo.role === 'volunteer' ? '志愿者' : (userInfo.role === 'admin' ? '管理员' : (userInfo.role === 'government' ? '政府人员' : '企业CSR')))}}
+      </view>
+      <view class="form-value" wx:else>
+        {{userInfo.role === 'elder' ? '老人' : (userInfo.role === 'volunteer' ? '志愿者' : (userInfo.role === 'admin' ? '管理员' : (userInfo.role === 'government' ? '政府人员' : '企业CSR')))}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 家庭成员 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">家庭成员</view>
+    <view wx:if="{{userInfo.familyMembers.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无家庭成员</view>
+    </view>
+    <view wx:else>
+      <view wx:for="{{userInfo.familyMembers}}" wx:key="id" class="family-member-item card aging-friendly">
+        <view class="family-member-info">
+          <view class="family-member-name font-lg font-medium text-primary">{{item.name}}</view>
+          <view class="family-member-relation font-sm text-secondary">{{item.relation}}</view>
+          <view class="family-member-phone font-sm text-secondary">{{item.phone}}</view>
+        </view>
+      </view>
+    </view>
+    <button 
+      class="btn btn-secondary font-lg"
+      bindtap="viewFamilyLinkage"
+      style="margin-top: 20rpx;"
+    >
+      管理家庭成员
+    </button>
+  </view>
+
+  <!-- 账户设置 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">账户设置</view>
+    <view class="setting-item card aging-friendly" bindtap="viewRoleSwitch">
+      <view class="setting-icon">🔄</view>
+      <view class="setting-info">
+        <view class="setting-name font-lg font-medium text-primary">角色切换</view>
+        <view class="setting-desc font-sm text-secondary">切换不同角色视图</view>
+      </view>
+      <view class="setting-arrow">→</view>
+    </view>
+    <view class="setting-item card aging-friendly" bindtap="logout">
+      <view class="setting-icon">🚪</view>
+      <view class="setting-info">
+        <view class="setting-name font-lg font-medium text-primary">退出登录</view>
+        <view class="setting-desc font-sm text-secondary">安全退出当前账号</view>
+      </view>
+      <view class="setting-arrow">→</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {},
+  "styleIsolation": "isolated",
+  "options": {
+    "multipleSlots": true
+  }
+}

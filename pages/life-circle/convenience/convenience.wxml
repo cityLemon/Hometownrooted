@@ -1,0 +1,124 @@
+<!-- convenience.wxml - 便民服务 -->
+<page-meta>
+  <navigation-bar title="便民服务"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 服务类型切换 -->
+  <view class="service-type-tabs">
+    <scroll-view scroll-x="true" enable-flex="true" class="scroll-view-horizontal">
+      <view 
+        class="service-type-tab" 
+        wx:for="[{value: 'all', label: '全部'}, {value: 'payment', label: '缴费'}, {value: 'express', label: '快递'}, {value: 'agriculture', label: '农产品'}, {value: 'housekeeping', label: '家政'}, {value: 'maintenance', label: '维修'}, {value: 'legal', label: '法律'}]" 
+        wx:key="value"
+        data-type="{{item.value}}"
+        bindtap="switchServiceType"
+        style="background-color: {{selectedServiceType === item.value ? 'var(--primary-color)' : 'var(--bg-tertiary)'}}; color: {{selectedServiceType === item.value ? 'white' : 'var(--text-primary)'}};"
+      >
+        {{item.label}}
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 便民服务列表 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">便民服务</view>
+    <view class="service-list">
+      <view 
+        wx:for="{{filteredServices}}" 
+        wx:key="id"
+        class="service-item card aging-friendly"
+      >
+        <view class="service-icon">
+          <image src="{{item.icon}}" mode="aspectFit"></image>
+        </view>
+        <view class="service-info">
+          <view class="service-name font-lg font-bold text-primary">{{item.name}}</view>
+          <view class="service-description font-sm text-secondary">{{item.description}}</view>
+        </view>
+        <view class="service-actions">
+          <button 
+            class="btn btn-primary font-lg"
+            bindtap="viewServiceDetail"
+            data-service-id="{{item.id}}"
+            style="margin-right: 20rpx;"
+          >
+            详情
+          </button>
+          <button 
+            class="btn btn-secondary font-lg"
+            bindtap="openBookingModal"
+            data-id="{{item.id}}"
+          >
+            预约
+          </button>
+        </view>
+      </view>
+      <view wx:if="{{filteredServices.length === 0}}">
+        <view class="empty-text font-lg text-secondary">暂无相关服务</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 服务预约记录 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">服务预约记录</view>
+    <view class="booking-list">
+      <view 
+        wx:for="{{bookingRecords}}" 
+        wx:key="id"
+        class="booking-item card aging-friendly"
+      >
+        <view class="booking-service font-lg font-medium text-primary">{{item.serviceName}}</view>
+        <view class="booking-time font-sm text-secondary">{{item.bookingTime}}</view>
+        <view class="booking-status" style="color: {{item.status === 'completed' ? '#52c41a' : (item.status === 'pending' ? '#faad14' : '#f5222d')}};">
+          {{item.status === 'completed' ? '已完成' : (item.status === 'pending' ? '待处理' : '已取消')}}
+        </view>
+        <button 
+          class="btn btn-primary font-lg"
+          bindtap="viewBookingRecord"
+          data-record-id="{{item.id}}"
+        >
+          查看
+        </button>
+      </view>
+      <view wx:if="{{bookingRecords.length === 0}}">
+        <view class="empty-text font-lg text-secondary">暂无服务预约记录</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预约弹窗 -->
+  <view class="modal-overlay" wx:if="{{showBookingModal}}"></view>
+  <view class="modal" wx:if="{{showBookingModal}}">
+    <view class="modal-header">
+      <view class="modal-title font-xl font-bold text-primary">确认预约</view>
+    </view>
+    <view class="modal-body">
+      <view class="modal-item">
+        <view class="modal-item-label font-lg text-primary">服务名称</view>
+        <view class="modal-item-value font-lg font-medium text-primary">{{selectedService.name}}</view>
+      </view>
+      <view class="modal-item">
+        <view class="modal-item-label font-lg text-primary">服务描述</view>
+        <view class="modal-item-value font-lg text-secondary">{{selectedService.description}}</view>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button 
+        class="btn btn-secondary font-lg"
+        bindtap="closeBookingModal"
+        style="margin-right: 20rpx; flex: 1;"
+      >
+        取消
+      </button>
+      <button 
+        class="btn btn-primary font-lg"
+        bindtap="confirmBooking"
+        style="flex: 1;"
+      >
+        确认预约
+      </button>
+    </view>
+  </view>
+</view>

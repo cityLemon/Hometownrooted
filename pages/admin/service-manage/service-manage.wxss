@@ -1,0 +1,244 @@
+/* service-manage.wxss - 服务管理样式 */
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 筛选区域样式 */
+.filter-section {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 筛选标签样式 */
+.filter-tabs {
+  display: flex;
+  margin-bottom: 30rpx;
+  background-color: var(--bg-tertiary);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.filter-tab {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filter-tab:active {
+  opacity: 0.8;
+}
+
+/* 服务类型筛选样式 */
+.service-type-filter {
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.filter-label {
+  margin-right: 20rpx;
+}
+
+.service-type-tabs {
+  flex: 1;
+  background-color: var(--bg-tertiary);
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.scroll-view-horizontal {
+  display: flex;
+  white-space: nowrap;
+  padding: 10rpx;
+}
+
+.service-type-tab {
+  padding: 15rpx 25rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-right: 10rpx;
+  border-radius: 16rpx;
+  display: inline-block;
+  margin: 5rpx;
+}
+
+.service-type-tab:active {
+  opacity: 0.8;
+}
+
+/* 导出数据按钮样式 */
+.export-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 服务预约列表样式 */
+.booking-list {
+  margin-bottom: 40rpx;
+}
+
+/* 服务预约项样式 */
+.booking-item {
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.booking-item:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+/* 预约项头部样式 */
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+/* 预约项状态样式 */
+.booking-status {
+  font-weight: 700;
+  font-size: 28rpx;
+}
+
+/* 预约项内容样式 */
+.booking-content {
+  margin-bottom: 30rpx;
+}
+
+/* 预约项服务名称样式 */
+.booking-service {
+  margin-bottom: 10rpx;
+}
+
+/* 预约项用户信息样式 */
+.booking-user-info {
+  margin-bottom: 10rpx;
+}
+
+/* 预约项时间样式 */
+.booking-time {
+  margin-bottom: 10rpx;
+}
+
+/* 预约项金额样式 */
+.booking-amount {
+  margin-bottom: 10rpx;
+}
+
+/* 预约项快递单号样式 */
+.booking-tracking {
+  display: flex;
+  align-items: center;
+}
+
+/* 预约项操作按钮样式 */
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 状态更新按钮样式 */
+.status-update-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 空状态样式 */
+.empty-text {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .filter-section {
+    padding: 20rpx;
+  }
+  
+  .filter-tab {
+    padding: 15rpx;
+    font-size: 30rpx;
+  }
+  
+  .service-type-filter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-label {
+    margin-bottom: 20rpx;
+  }
+  
+  .service-type-tab {
+    padding: 12rpx 20rpx;
+    font-size: 28rpx;
+  }
+  
+  .export-button-container {
+    justify-content: center;
+    margin-top: 20rpx;
+  }
+  
+  .booking-item {
+    padding: 20rpx;
+  }
+  
+  .booking-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .booking-status {
+    margin-top: 10rpx;
+  }
+}

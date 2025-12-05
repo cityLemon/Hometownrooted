@@ -1,0 +1,207 @@
+/**profile.wxss - 健康档案管理样式**/
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: calc(100vh - var(--navigation-bar-height, 0px));
+}
+
+/* 编辑模式按钮 */
+.edit-mode-buttons {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 保存/取消按钮 */
+.save-cancel-buttons {
+  display: flex;
+  margin-bottom: 30rpx;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 20rpx;
+  box-shadow: var(--shadow-sm);
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  border: 2rpx solid var(--border-color);
+  transition: box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 6rpx;
+  width: 0;
+  background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+  transition: width 0.5s ease;
+}
+
+.card:hover::before {
+  width: 100%;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 表单样式 */
+.form-item {
+  margin-bottom: 36rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.form-label {
+  margin-bottom: 12rpx;
+  font-size: 36rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-value {
+  font-size: 34rpx;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  padding: 24rpx;
+  border-radius: 12rpx;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 96rpx;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+}
+
+.form-value:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.form-input {
+  width: 100%;
+  padding: 24rpx;
+  border: 3rpx solid var(--border-color);
+  border-radius: 12rpx;
+  font-size: 34rpx;
+  box-sizing: border-box;
+  min-height: 96rpx;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 8rpx var(--primary-alpha-10);
+}
+
+.form-input::placeholder {
+  color: var(--text-tertiary);
+  opacity: 0.8;
+}
+
+/* 疾病记录样式 */
+.disease-item {
+  padding: 20rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 8rpx;
+  margin-bottom: 10rpx;
+}
+
+.disease-name {
+  margin-bottom: 10rpx;
+}
+
+.disease-detail {
+  margin-top: 10rpx;
+}
+
+/* 用药记录样式 */
+.medication-item {
+  padding: 20rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 8rpx;
+  margin-bottom: 10rpx;
+}
+
+.medication-name {
+  margin-bottom: 10rpx;
+}
+
+.medication-detail {
+  margin-top: 10rpx;
+}
+
+/* 编辑模式下的疾病管理样式 */
+.disease-edit-item {
+  margin-bottom: 30rpx;
+  padding: 20rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 8rpx;
+}
+
+.disease-edit-form {
+  margin-bottom: 20rpx;
+}
+
+/* 编辑模式下的用药管理样式 */
+.medication-edit-item {
+  margin-bottom: 30rpx;
+  padding: 20rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 8rpx;
+}
+
+.medication-edit-form {
+  margin-bottom: 20rpx;
+}
+
+/* 空状态样式 */
+.empty-text {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .card {
+    padding: 20rpx;
+  }
+  
+  .form-item {
+    margin-bottom: 20rpx;
+  }
+  
+  .section-title {
+    font-size: 40rpx;
+  }
+}

@@ -1,0 +1,153 @@
+/* emergency-button.wxss - 紧急按钮组件样式 */
+
+/* 按钮容器 */
+.emergency-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+}
+
+/* 按钮包装器 */
+.button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* 紧急按钮样式 */
+.emergency-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border: none;
+  outline: none;
+  animation: pulse 1.5s infinite;
+  transition: all 0.3s ease;
+}
+
+.emergency-button:active {
+  transform: scale(0.95);
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 34, 45, 0.4);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 60rpx rgba(245, 34, 45, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 34, 45, 0);
+  }
+}
+
+/* 倒计时数字样式 */
+.countdown-number {
+  font-weight: 700;
+  color: var(--error-color);
+  margin-bottom: 10rpx;
+}
+
+/* 倒计时文本样式 */
+.countdown-text {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 20rpx;
+}
+
+/* 取消按钮样式 */
+.cancel-button {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: none;
+  outline: none;
+  padding: 15rpx 40rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.cancel-button:active {
+  background-color: var(--border-color);
+}
+
+/* 呼叫中样式 */
+.calling-icon {
+  color: var(--primary-color);
+  margin-bottom: 20rpx;
+}
+
+.calling-text {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* 呼叫成功样式 */
+.success-icon {
+  color: var(--success-color);
+  margin-bottom: 20rpx;
+}
+
+.success-text {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* 呼叫失败样式 */
+.failed-icon {
+  color: var(--error-color);
+  margin-bottom: 20rpx;
+}
+
+.failed-text {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 20rpx;
+}
+
+/* 重试按钮样式 */
+.retry-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  outline: none;
+  padding: 15rpx 40rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.retry-button:active {
+  background-color: var(--primary-dark);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .emergency-button {
+    width: 280rpx;
+    height: 280rpx;
+    font-size: 44rpx;
+  }
+  
+  .countdown-number {
+    font-size: 140rpx;
+  }
+  
+  .countdown-text {
+    font-size: 34rpx;
+  }
+  
+  .cancel-button {
+    font-size: 34rpx;
+    padding: 20rpx 50rpx;
+  }
+}

@@ -1,0 +1,136 @@
+<!-- emergency.wxml - 一键呼救 -->
+<page-meta>
+  <navigation-bar title="一键呼救"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 位置信息 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">当前位置</view>
+    <view class="location-info font-lg text-primary">
+      {{location.address}}
+    </view>
+    <view class="location-coords font-sm text-secondary">
+      {{location.latitude}}, {{location.longitude}}
+    </view>
+    <button 
+      class="btn btn-secondary font-lg"
+      bindtap="refreshLocation"
+      style="margin-top: 20rpx;"
+    >
+      刷新位置
+    </button>
+  </view>
+
+  <!-- 一键呼救按钮 -->
+  <view class="emergency-section">
+    <view class="emergency-title font-2xl font-bold text-primary" wx:if="{{callStatus === 'idle' || callStatus === 'success' || callStatus === 'failed'}}">
+      紧急情况，请按此按钮
+    </view>
+    <view class="emergency-title font-2xl font-bold text-primary" wx:if="{{callStatus === 'calling'}}">
+      正在呼救，请稍候...
+    </view>
+    
+    <!-- 呼救按钮 -->
+    <view wx:if="{{callStatus === 'idle'}}">
+      <view class="emergency-button-container">
+        <button 
+          class="emergency-btn"
+          bindtap="emergencyCall"
+        >
+          一键呼救
+        </button>
+      </view>
+      <view class="emergency-hint font-lg text-secondary">
+        按下按钮后将在10秒后自动向紧急联系人发送求救信息
+      </view>
+    </view>
+    
+    <!-- 倒计时和取消按钮 -->
+    <view wx:if="{{callStatus === 'calling'}}">
+      <view class="countdown-container">
+        <view class="countdown-number font-2xl font-bold text-error">{{countDown}}</view>
+        <view class="countdown-text font-lg text-secondary">秒后自动呼救</view>
+      </view>
+      <button 
+        class="btn btn-danger btn-large font-lg font-bold"
+        bindtap="cancelCall"
+        style="margin-top: 30rpx;"
+      >
+        取消呼救
+      </button>
+    </view>
+    
+    <!-- 呼救成功 -->
+    <view wx:if="{{callStatus === 'success'}}">
+      <view class="success-icon">✅</view>
+      <view class="success-text font-xl font-bold text-success">
+        呼救已发送成功！
+      </view>
+      <view class="success-hint font-lg text-secondary">
+        紧急联系人已收到您的求救信息
+      </view>
+    </view>
+    
+    <!-- 呼救失败 -->
+    <view wx:if="{{callStatus === 'failed'}}">
+      <view class="failed-icon">❌</view>
+      <view class="failed-text font-xl font-bold text-error">
+        呼救发送失败
+      </view>
+      <button 
+        class="btn btn-primary btn-large font-lg font-bold"
+        bindtap="emergencyCall"
+        style="margin-top: 30rpx;"
+      >
+        重新呼救
+      </button>
+    </view>
+  </view>
+
+  <!-- 自动拨号开关 -->
+  <view class="card">
+    <view class="auto-call-container">
+      <view class="auto-call-text font-lg font-medium text-primary">
+        自动拨号
+      </view>
+      <view class="auto-call-desc font-sm text-secondary">
+        呼救时自动拨打紧急联系人电话
+      </view>
+    </view>
+    <switch 
+      class="auto-call-switch"
+      checked="{{autoCall}}"
+      bindchange="toggleAutoCall"
+    />
+  </view>
+
+  <!-- 紧急联系人 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">紧急联系人</view>
+    <view wx:if="{{emergencyContacts.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无紧急联系人</view>
+    </view>
+    <view wx:else>
+      <view 
+        wx:for="{{emergencyContacts}}" 
+        wx:key="id"
+        class="contact-item aging-friendly"
+      >
+        <view class="contact-info">
+          <view class="contact-name font-lg font-medium text-primary">{{item.name}}</view>
+          <view class="contact-relation font-sm text-secondary">{{item.relation}}</view>
+          <view class="contact-phone font-sm text-secondary">{{item.phone}}</view>
+        </view>
+        <button 
+          class="btn btn-primary font-lg"
+          bindtap="manualDial"
+          data-phone="{{item.phone}}"
+          style="margin-left: 20rpx;"
+        >
+          拨号
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

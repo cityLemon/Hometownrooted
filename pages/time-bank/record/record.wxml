@@ -1,0 +1,138 @@
+<!-- record.wxml - 服务记录与兑换 -->
+<page-meta>
+  <navigation-bar title="时间银行"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 时间币余额 -->
+  <view class="card balance-card">
+    <view class="balance-title font-xl font-bold text-primary">我的时间币</view>
+    <view class="balance-content">
+      <view class="balance-number font-2xl font-bold text-primary">{{timeCoinBalance}}</view>
+      <view class="balance-unit font-lg text-secondary">时间币</view>
+    </view>
+    <view class="balance-hint font-lg text-secondary">
+      每1小时志愿服务可获得1时间币
+    </view>
+  </view>
+
+  <!-- 服务记录 -->
+  <view class="section-title font-xl font-bold text-primary">服务记录</view>
+  
+  <!-- 记录类型切换 -->
+  <view class="record-type-tabs">
+    <view 
+      class="record-type-tab" 
+      wx:for="[{value: 'all', label: '全部'}, {value: 'earn', label: '赚取'}, {value: 'spend', label: '消费'}]" 
+      wx:key="value"
+      data-type="{{item.value}}"
+      bindtap="switchRecordType"
+      style="background-color: {{selectedRecordType === item.value ? 'var(--primary-color)' : 'var(--bg-tertiary)'}}; color: {{selectedRecordType === item.value ? 'white' : 'var(--text-primary)'}};"
+    >
+      {{item.label}}
+    </view>
+  </view>
+  
+  <!-- 服务记录列表 -->
+  <view class="record-list">
+    <view 
+      wx:for="{{filteredServiceRecords}}" 
+      wx:key="id"
+      class="record-item aging-friendly"
+    >
+      <view class="record-type-icon" style="color: {{item.type === 'earn' ? '#52c41a' : '#f5222d'}};">
+        {{item.type === 'earn' ? '+' : '-'}}{{item.duration}}
+      </view>
+      <view class="record-info">
+        <view class="record-title font-lg font-medium text-primary">{{item.title}}</view>
+        <view class="record-time font-sm text-secondary">{{item.time}}</view>
+        <view class="record-status" style="color: {{item.status === 'completed' ? '#52c41a' : '#faad14'}};">
+          {{item.status === 'completed' ? '已完成' : '进行中'}}
+        </view>
+      </view>
+      <button 
+        class="btn btn-primary font-lg"
+        bindtap="viewServiceDetail"
+        data-record-id="{{item.id}}"
+        style="margin-left: 20rpx;"
+      >
+        详情
+      </button>
+    </view>
+    <view wx:if="{{filteredServiceRecords.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无服务记录</view>
+    </view>
+  </view>
+
+  <!-- 兑换规则 -->
+  <view class="section-title font-xl font-bold text-primary">兑换规则</view>
+  <view class="exchange-rules-grid">
+    <view 
+      wx:for="{{exchangeRules}}" 
+      wx:key="id"
+      class="exchange-rule-card aging-friendly"
+      bindtap="openExchangeModal"
+      data-id="{{item.id}}"
+    >
+      <view class="exchange-rule-image">
+        <image src="{{item.image}}" mode="aspectFit"></image>
+      </view>
+      <view class="exchange-rule-info">
+        <view class="exchange-rule-name font-lg font-medium text-primary">{{item.name}}</view>
+        <view class="exchange-rule-description font-sm text-secondary">{{item.description}}</view>
+        <view class="exchange-rule-required font-lg font-bold text-primary" style="color: var(--error-color);">
+          {{item.requiredTime}} 时间币
+        </view>
+      </view>
+      <button 
+        class="btn btn-primary font-lg"
+        bindtap="openExchangeModal"
+        data-id="{{item.id}}"
+      >
+        兑换
+      </button>
+    </view>
+  </view>
+
+  <!-- 兑换弹窗 -->
+  <view class="modal-mask" wx:if="{{showExchangeModal}}"></view>
+  <view class="modal-container" wx:if="{{showExchangeModal}}">
+    <view class="modal-content">
+      <view class="modal-title font-xl font-bold text-primary">确认兑换</view>
+      <view class="modal-body">
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">商品名称</view>
+          <view class="modal-item-value font-lg font-medium text-primary">{{selectedExchangeItem.name}}</view>
+        </view>
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">所需时间币</view>
+          <view class="modal-item-value font-lg font-bold text-error">{{selectedExchangeItem.requiredTime}} 时间币</view>
+        </view>
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">当前余额</view>
+          <view class="modal-item-value font-lg font-bold text-primary">{{timeCoinBalance}} 时间币</view>
+        </view>
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">兑换说明</view>
+          <view class="modal-item-value font-lg text-secondary">{{selectedExchangeItem.description}}</view>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button 
+          class="btn btn-secondary font-lg"
+          bindtap="closeExchangeModal"
+          style="margin-right: 20rpx; flex: 1;"
+        >
+          取消
+        </button>
+        <button 
+          class="btn btn-primary font-lg"
+          bindtap="confirmExchange"
+          style="flex: 1;"
+        >
+          确认兑换
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,120 @@
+<!--index.wxml-->
+<page-meta>
+  <navigation-bar title="乡村安土"></navigation-bar>
+</page-meta>
+
+<!-- 页面加载动画 -->
+<view class="page-loader {{pageLoaded ? 'hidden' : ''}}">
+  <view class="loader-spinner"></view>
+  <text class="loader-text">加载中...</text>
+</view>
+
+<!-- 离线状态提示 -->
+<view class="offline-tip" wx:if="{{offline}}">
+  当前处于离线状态，部分功能可能受限
+</view>
+
+<!-- 轮播图 -->
+<view class="swiper-container">
+  <swiper 
+    indicator-dots="{{true}}" 
+    autoplay="{{true}}" 
+    interval="3000" 
+    duration="800"
+    circular="{{true}}"
+    class="swiper"
+    indicator-active-color="#ffffff"
+    indicator-color="rgba(255, 255, 255, 0.5)"
+  >
+    <swiper-item 
+      wx:for="{{swiperList}}" 
+      wx:key="id"
+      data-url="{{item.url}}"
+      bindtap="swiperItemTap"
+      class="swiper-item"
+    >
+      <image src="{{item.image}}" mode="aspectFill" class="swiper-image"></image>
+      <!-- 渐变叠加层 -->
+      <view class="swiper-overlay"></view>
+      <!-- 轮播标题，添加动画 -->
+      <view class="swiper-content">
+        <view class="swiper-title fade-in-up">{{item.title}}</view>
+      </view>
+    </swiper-item>
+  </swiper>
+</view>
+
+<!-- 主要内容 -->
+<view class="main-content">
+  <!-- 角色选择 -->
+  <view class="section card">
+    <view class="section-title font-xl font-bold text-primary">请选择您的角色</view>
+    <view class="role-list">
+      <view 
+        wx:for="{{roles}}" 
+        wx:key="id"
+        class="role-item card aging-friendly"
+        data-role-id="{{item.id}}"
+        bindtap="selectRole"
+        data-index="{{index}}"
+        animation="{{roleAnimations[index]}}"
+        style="background-color: {{selectedRole === item.id ? 'var(--primary-lightest)' : 'var(--bg-primary)'}};"
+      >
+        <!-- 选中状态指示器 -->
+        <view class="role-select-indicator" wx:if="{{selectedRole === item.id}}">
+          <text class="select-icon">✓</text>
+        </view>
+        <!-- 角色图标容器 -->
+        <view class="role-icon-container">
+          <view class="role-icon">
+            <image src="{{item.icon}}" mode="aspectFit"></image>
+          </view>
+        </view>
+        <!-- 角色信息 -->
+        <view class="role-info">
+          <view class="role-name font-lg font-bold text-primary">{{item.name}}</view>
+          <view class="role-description font-sm text-secondary">{{item.description}}</view>
+        </view>
+        <!-- 装饰元素 -->
+        <view class="role-decoration"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="section card">
+    <view class="section-title font-xl font-bold text-primary">快捷入口</view>
+    <view class="quick-entrance-grid">
+      <view 
+        wx:for="{{quickEntrances}}" 
+        wx:key="id"
+        class="quick-entrance-item aging-friendly"
+        data-url="{{item.url}}"
+        bindtap="quickEntranceTap"
+        style="background-color: var(--bg-secondary);"
+      >
+        <view class="quick-entrance-icon">
+          <image src="{{item.icon}}" mode="aspectFit"></image>
+        </view>
+        <view class="quick-entrance-name font-base text-primary">{{item.name}}</view>
+      </view>
+      <!-- 进入按钮 -->
+      <view class="quick-entrance-item enter-btn-item aging-friendly">
+        <button 
+          class="btn btn-primary btn-full font-lg font-bold"
+          bindtap="enterRole"
+          disabled="{{!selectedRole}}"
+          animation="{{enterButtonAnimation}}"
+          style="width: 100%; height: 100%;"
+        >
+          进入系统
+        </button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 语音导航按钮 -->
+<view class="voice-nav-btn" bindtap="voiceNav">
+  <text class="font-xl">🎤</text>
+</view>

@@ -1,0 +1,79 @@
+<!-- emergency-button.wxml - 紧急按钮组件 -->
+<view class="emergency-button-container">
+  <!-- 按钮状态：idle, counting, calling, success, failed -->
+  
+  <!-- 空闲状态 -->
+  <view class="button-wrapper" wx:if="{{status === 'idle'}}">
+    <button 
+      class="emergency-button" 
+      style="
+        background-color: {{color}};
+        color: white;
+        width: {{size === 'small' ? '200rpx' : (size === 'medium' ? '250rpx' : '300rpx')}};
+        height: {{size === 'small' ? '200rpx' : (size === 'medium' ? '250rpx' : '300rpx')}};
+        font-size: {{size === 'small' ? '32rpx' : (size === 'medium' ? '40rpx' : '48rpx')}};
+        border-radius: 50%;
+        box-shadow: var(--shadow-lg);
+      "
+      bindtap="onButtonClick"
+      disabled="{{disabled}}"
+    >
+      {{text}}
+    </button>
+  </view>
+  
+  <!-- 倒计时状态 -->
+  <view class="button-wrapper" wx:if="{{status === 'counting'}}">
+    <!-- 倒计时数字 -->
+    <view class="countdown-number" style="font-size: {{size === 'small' ? '100rpx' : (size === 'medium' ? '120rpx' : '150rpx')}};">
+      {{remainingTime}}
+    </view>
+    <view class="countdown-text" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}};">秒后自动呼救</view>
+    <!-- 取消按钮 -->
+    <button 
+      class="cancel-button" 
+      style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-top: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};"
+      bindtap="cancelCall"
+    >
+      取消呼救
+    </button>
+  </view>
+  
+  <!-- 呼叫中状态 -->
+  <view class="button-wrapper" wx:if="{{status === 'calling'}}">
+    <view class="calling-icon" style="font-size: {{size === 'small' ? '100rpx' : (size === 'medium' ? '120rpx' : '150rpx')}};">
+      📞
+    </view>
+    <view class="calling-text" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}};">
+      正在呼叫...
+    </view>
+  </view>
+  
+  <!-- 呼叫成功状态 -->
+  <view class="button-wrapper" wx:if="{{status === 'success'}}">
+    <view class="success-icon" style="font-size: {{size === 'small' ? '100rpx' : (size === 'medium' ? '120rpx' : '150rpx')}};">
+      ✅
+    </view>
+    <view class="success-text" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}};">
+      呼叫成功
+    </view>
+  </view>
+  
+  <!-- 呼叫失败状态 -->
+  <view class="button-wrapper" wx:if="{{status === 'failed'}}">
+    <view class="failed-icon" style="font-size: {{size === 'small' ? '100rpx' : (size === 'medium' ? '120rpx' : '150rpx')}};">
+      ❌
+    </view>
+    <view class="failed-text" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}};">
+      呼叫失败
+    </view>
+    <!-- 重试按钮 -->
+    <button 
+      class="retry-button" 
+      style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-top: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};"
+      bindtap="onButtonClick"
+    >
+      重试
+    </button>
+  </view>
+</view>

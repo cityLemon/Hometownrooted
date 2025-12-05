@@ -1,0 +1,9 @@
+<view class="weui-navigation-bar">
+  <view class="weui-navigation-bar__inner" style="{{displayStyle}};">
+
+    <!-- 标题 -->
+    <view class='weui-navigation-bar__center'>
+      <text>{{title}}</text>
+    </view>
+  </view>
+</view>

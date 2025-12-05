@@ -1,0 +1,49 @@
+<!-- health-card.wxml - 健康卡片组件 -->
+<view 
+  class="health-card" 
+  style="
+    background-color: var(--bg-primary);
+    border-radius: 16rpx;
+    box-shadow: var(--shadow-sm);
+    padding: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};
+    min-height: {{size === 'small' ? '150rpx' : (size === 'medium' ? '200rpx' : '250rpx')}};
+    cursor: {{clickable ? 'pointer' : 'default'}};
+  "
+  bindtap="onCardClick"
+>
+  <!-- 数据标签 -->
+  <view class="health-card-label" wx:if="{{showLabel}}" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-bottom: {{size === 'small' ? '10rpx' : (size === 'medium' ? '20rpx' : '30rpx')}};">
+    {{typeLabels[dataType]}}
+  </view>
+  
+  <!-- 数据内容 -->
+  <view class="health-card-content">
+    <!-- 数据值 -->
+    <view class="health-card-value" style="font-size: {{size === 'small' ? '40rpx' : (size === 'medium' ? '56rpx' : '72rpx')}};">
+      <!-- 血压特殊处理 -->
+      <text wx:if="{{dataType === 'bloodPressure' && data.systolic && data.diastolic}}">
+        {{data.systolic}}/{{data.diastolic}}
+      </text>
+      <!-- 其他数据类型 -->
+      <text wx:else>
+        {{data.value || '--'}}
+      </text>
+    </view>
+    
+    <!-- 数据单位 -->
+    <view class="health-card-unit" style="font-size: {{size === 'small' ? '24rpx' : (size === 'medium' ? '28rpx' : '32rpx')}};">
+      {{data.unit}}
+    </view>
+    
+    <!-- 状态指示器 -->
+    <view 
+      class="health-card-status" 
+      style="
+        font-size: {{size === 'small' ? '24rpx' : (size === 'medium' ? '28rpx' : '32rpx')}};
+        color: {{data.status === 'normal' ? '#52c41a' : (data.status === 'warning' ? '#faad14' : '#f5222d')}};
+      "
+    >
+      {{data.status === 'normal' ? '正常' : (data.status === 'warning' ? '警告' : '危险')}}
+    </view>
+  </view>
+</view>

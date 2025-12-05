@@ -1,0 +1,254 @@
+/* convenience.wxss - 便民服务样式 */
+
+/* 页面内容 */
+.page-content {
+  padding: 30rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 区域标题 */
+.section-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+/* 服务类型切换样式 */
+.service-type-tabs {
+  margin-bottom: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.scroll-view-horizontal {
+  display: flex;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.service-type-tab {
+  display: inline-block;
+  padding: 20rpx 30rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-right: 10rpx;
+  border-radius: 16rpx;
+  margin: 10rpx;
+}
+
+.service-type-tab:active {
+  opacity: 0.8;
+}
+
+/* 服务列表样式 */
+.service-list {
+  margin-bottom: 40rpx;
+}
+
+/* 服务项样式 */
+.service-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.service-item:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+/* 服务图标样式 */
+.service-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-right: 30rpx;
+  background-color: var(--bg-secondary);
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-icon image {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+/* 服务信息样式 */
+.service-info {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.service-name {
+  margin-bottom: 10rpx;
+}
+
+/* 服务操作按钮样式 */
+.service-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* 预约记录列表样式 */
+.booking-list {
+  margin-bottom: 40rpx;
+}
+
+/* 预约记录项样式 */
+.booking-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.booking-item:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-md);
+}
+
+/* 预约服务名称样式 */
+.booking-service {
+  margin-bottom: 10rpx;
+}
+
+/* 预约时间样式 */
+.booking-time {
+  margin-bottom: 10rpx;
+}
+
+/* 预约状态样式 */
+.booking-status {
+  font-weight: 700;
+}
+
+/* 空状态样式 */
+.empty-text {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-secondary);
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 模态框样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  width: 90%;
+  max-width: 600rpx;
+}
+
+.modal-content {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  box-shadow: var(--shadow-lg);
+  padding: 40rpx;
+}
+
+.modal-title {
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.modal-body {
+  margin-bottom: 30rpx;
+}
+
+.modal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.modal-footer {
+  display: flex;
+}
+
+/* 按钮样式扩展 */
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 20rpx;
+  }
+  
+  .service-type-tab {
+    padding: 15rpx 25rpx;
+    font-size: 30rpx;
+  }
+  
+  .service-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .service-icon {
+    margin-bottom: 20rpx;
+  }
+  
+  .service-info {
+    margin-right: 0;
+    margin-bottom: 20rpx;
+  }
+  
+  .service-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .btn {
+    flex: 1;
+  }
+  
+  .booking-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .booking-status {
+    margin-bottom: 20rpx;
+  }
+  
+  .modal-container {
+    width: 95%;
+  }
+  
+  .modal-content {
+    padding: 30rpx;
+  }
+}

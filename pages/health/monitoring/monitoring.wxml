@@ -1,0 +1,189 @@
+<!-- monitoring.wxml - 健康监测数据 -->
+<page-meta>
+  <navigation-bar title="健康监测数据"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 设备连接状态 -->
+  <view class="card device-status">
+    <view class="device-status-content">
+      <view class="device-status-icon" wx:if="{{healthData.deviceStatus.connected}}">
+        ✅ 设备已连接
+      </view>
+      <view class="device-status-icon" wx:else>
+        ❌ 设备未连接
+      </view>
+      <view class="device-status-info font-lg text-primary">
+        上次同步：{{healthData.deviceStatus.lastSyncTime}}
+      </view>
+      <view class="device-status-battery font-lg text-primary">
+        电量：{{healthData.deviceStatus.battery}}%
+      </view>
+    </view>
+    <button 
+      class="btn btn-primary font-lg"
+      bindtap="refreshData"
+      style="margin-left: 20rpx;"
+    >
+      刷新数据
+    </button>
+  </view>
+
+  <!-- 实时健康数据 -->
+  <view class="section-title font-xl font-bold text-primary">实时健康数据</view>
+  <view class="real-time-data-grid">
+    <!-- 血压 -->
+    <view class="data-card aging-friendly" 
+      style="background-color: {{selectedDataType === 'bloodPressure' ? 'var(--primary-light)' : 'var(--bg-primary)'}};"
+      bindtap="switchDataType"
+      data-type="bloodPressure"
+    >
+      <view class="data-label font-lg font-medium text-primary">血压</view>
+      <view class="data-value font-2xl font-bold text-primary">
+        {{healthData.realTime.bloodPressure.systolic}}/{{healthData.realTime.bloodPressure.diastolic}}
+      </view>
+      <view class="data-unit font-lg text-secondary">{{healthData.realTime.bloodPressure.unit}}</view>
+      <view class="data-status" style="color: {{healthData.realTime.bloodPressure.status === 'normal' ? '#52c41a' : (healthData.realTime.bloodPressure.status === 'warning' ? '#faad14' : '#f5222d')}};">
+        {{healthData.realTime.bloodPressure.status === 'normal' ? '正常' : (healthData.realTime.bloodPressure.status === 'warning' ? '警告' : '危险')}}
+      </view>
+    </view>
+    
+    <!-- 心率 -->
+    <view class="data-card aging-friendly" 
+      style="background-color: {{selectedDataType === 'heartRate' ? 'var(--primary-light)' : 'var(--bg-primary)'}};"
+      bindtap="switchDataType"
+      data-type="heartRate"
+    >
+      <view class="data-label font-lg font-medium text-primary">心率</view>
+      <view class="data-value font-2xl font-bold text-primary">
+        {{healthData.realTime.heartRate.value}}
+      </view>
+      <view class="data-unit font-lg text-secondary">{{healthData.realTime.heartRate.unit}}</view>
+      <view class="data-status" style="color: {{healthData.realTime.heartRate.status === 'normal' ? '#52c41a' : (healthData.realTime.heartRate.status === 'warning' ? '#faad14' : '#f5222d')}};">
+        {{healthData.realTime.heartRate.status === 'normal' ? '正常' : (healthData.realTime.heartRate.status === 'warning' ? '警告' : '危险')}}
+      </view>
+    </view>
+    
+    <!-- 血糖 -->
+    <view class="data-card aging-friendly" 
+      style="background-color: {{selectedDataType === 'bloodGlucose' ? 'var(--primary-light)' : 'var(--bg-primary)'}};"
+      bindtap="switchDataType"
+      data-type="bloodGlucose"
+    >
+      <view class="data-label font-lg font-medium text-primary">血糖</view>
+      <view class="data-value font-2xl font-bold text-primary">
+        {{healthData.realTime.bloodGlucose.value}}
+      </view>
+      <view class="data-unit font-lg text-secondary">{{healthData.realTime.bloodGlucose.unit}}</view>
+      <view class="data-status" style="color: {{healthData.realTime.bloodGlucose.status === 'normal' ? '#52c41a' : (healthData.realTime.bloodGlucose.status === 'warning' ? '#faad14' : '#f5222d')}};">
+        {{healthData.realTime.bloodGlucose.status === 'normal' ? '正常' : (healthData.realTime.bloodGlucose.status === 'warning' ? '警告' : '危险')}}
+      </view>
+    </view>
+    
+    <!-- 体温 -->
+    <view class="data-card aging-friendly" 
+      style="background-color: {{selectedDataType === 'temperature' ? 'var(--primary-light)' : 'var(--bg-primary)'}};"
+      bindtap="switchDataType"
+      data-type="temperature"
+    >
+      <view class="data-label font-lg font-medium text-primary">体温</view>
+      <view class="data-value font-2xl font-bold text-primary">
+        {{healthData.realTime.temperature.value}}
+      </view>
+      <view class="data-unit font-lg text-secondary">{{healthData.realTime.temperature.unit}}</view>
+      <view class="data-status" style="color: {{healthData.realTime.temperature.status === 'normal' ? '#52c41a' : (healthData.realTime.temperature.status === 'warning' ? '#faad14' : '#f5222d')}};">
+        {{healthData.realTime.temperature.status === 'normal' ? '正常' : (healthData.realTime.temperature.status === 'warning' ? '警告' : '危险')}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史数据 -->
+  <view class="section-title font-xl font-bold text-primary">历史数据</view>
+  
+  <!-- 时间范围切换 -->
+  <view class="time-range-tabs">
+    <view 
+      class="time-range-tab" 
+      wx:for="['day', 'week', 'month']" 
+      wx:key="index"
+      data-range="{{item}}"
+      bindtap="switchTimeRange"
+      style="background-color: {{timeRange === item ? 'var(--primary-color)' : 'var(--bg-tertiary)'}}; color: {{timeRange === item ? 'white' : 'var(--text-primary)'}};"
+    >
+      {{item === 'day' ? '今日' : (item === 'week' ? '本周' : '本月')}}
+    </view>
+  </view>
+  
+  <!-- 数据图表区域 -->
+  <view class="chart-container card">
+    <view class="chart-title font-lg font-medium text-primary">
+      {{selectedDataType === 'bloodPressure' ? '血压' : (selectedDataType === 'heartRate' ? '心率' : (selectedDataType === 'bloodGlucose' ? '血糖' : '体温'))}}历史数据
+    </view>
+    <view class="chart-placeholder">
+      <view class="chart-icon">📊</view>
+      <view class="chart-text font-lg text-secondary">
+        图表功能开发中，敬请期待
+      </view>
+      <view class="chart-subtext font-sm text-tertiary">
+        当前显示{{timeRange === 'day' ? '今日' : (timeRange === 'week' ? '本周' : '本月')}}{{selectedDataType === 'bloodPressure' ? '血压' : (selectedDataType === 'heartRate' ? '心率' : (selectedDataType === 'bloodGlucose' ? '血糖' : '体温'))}}数据
+      </view>
+    </view>
+    
+    <!-- 血压历史数据列表 -->
+    <view wx:if="{{selectedDataType === 'bloodPressure'}}">
+      <view wx:for="{{healthData.history.bloodPressure}}" wx:key="date" class="history-item">
+        <view class="history-date font-lg text-primary">{{item.date}}</view>
+        <view class="history-value font-lg font-medium text-primary">
+          {{item.systolic}}/{{item.diastolic}} mmHg
+        </view>
+        <view class="history-status" style="color: {{item.status === 'normal' ? '#52c41a' : (item.status === 'warning' ? '#faad14' : '#f5222d')}};">
+          {{item.status === 'normal' ? '正常' : (item.status === 'warning' ? '警告' : '危险')}}
+        </view>
+      </view>
+    </view>
+    
+    <!-- 心率历史数据列表 -->
+    <view wx:if="{{selectedDataType === 'heartRate'}}">
+      <view wx:for="{{healthData.history.heartRate}}" wx:key="date" class="history-item">
+        <view class="history-date font-lg text-primary">{{item.date}}</view>
+        <view class="history-value font-lg font-medium text-primary">
+          {{item.value}} bpm
+        </view>
+        <view class="history-status" style="color: {{item.status === 'normal' ? '#52c41a' : (item.status === 'warning' ? '#faad14' : '#f5222d')}};">
+          {{item.status === 'normal' ? '正常' : (item.status === 'warning' ? '警告' : '危险')}}
+        </view>
+      </view>
+    </view>
+    
+    <!-- 血糖历史数据列表 -->
+    <view wx:if="{{selectedDataType === 'bloodGlucose'}}">
+      <view wx:for="{{healthData.history.bloodGlucose}}" wx:key="date" class="history-item">
+        <view class="history-date font-lg text-primary">{{item.date}}</view>
+        <view class="history-value font-lg font-medium text-primary">
+          {{item.value}} mmol/L
+        </view>
+        <view class="history-status" style="color: {{item.status === 'normal' ? '#52c41a' : (item.status === 'warning' ? '#faad14' : '#f5222d')}};">
+          {{item.status === 'normal' ? '正常' : (item.status === 'warning' ? '警告' : '危险')}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button 
+      class="btn btn-primary font-lg"
+      bindtap="viewDetailData"
+      style="margin-right: 20rpx; flex: 1;"
+    >
+      查看详情
+    </button>
+    <button 
+      class="btn btn-secondary font-lg"
+      bindtap="exportData"
+      style="flex: 1;"
+    >
+      导出数据
+    </button>
+  </view>
+</view>

@@ -1,0 +1,257 @@
+<!-- profile.wxml - 健康档案管理 -->
+<page-meta>
+  <navigation-bar title="健康档案管理"></navigation-bar>
+</page-meta>
+
+<view class="page-content">
+  <!-- 编辑模式按钮 -->
+  <view class="edit-mode-buttons" wx:if="{{!editMode}}">
+    <button 
+      class="btn btn-primary btn-large font-lg font-bold"
+      bindtap="enterEditMode"
+    >
+      编辑档案
+    </button>
+  </view>
+
+  <!-- 保存/取消按钮 -->
+  <view class="save-cancel-buttons" wx:if="{{editMode}}">
+    <button 
+      class="btn btn-primary btn-large font-lg font-bold"
+      bindtap="saveEdit"
+      style="margin-right: 20rpx; flex: 1;"
+    >
+      保存
+    </button>
+    <button 
+      class="btn btn-secondary btn-large font-lg font-bold"
+      bindtap="cancelEdit"
+      style="flex: 1;"
+    >
+      取消
+    </button>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">基本信息</view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">姓名</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{healthProfile.basicInfo.name}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempProfile.basicInfo.name}}"
+        placeholder="请输入姓名"
+        data-field="basicInfo" 
+        data-subfield="name"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">年龄</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{healthProfile.basicInfo.age}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempProfile.basicInfo.age}}"
+        placeholder="请输入年龄"
+        type="number"
+        data-field="basicInfo" 
+        data-subfield="age"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">性别</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{healthProfile.basicInfo.gender}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempProfile.basicInfo.gender}}"
+        placeholder="请输入性别"
+        data-field="basicInfo" 
+        data-subfield="gender"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">联系电话</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{healthProfile.basicInfo.phone}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempProfile.basicInfo.phone}}"
+        placeholder="请输入联系电话"
+        type="number"
+        data-field="basicInfo" 
+        data-subfield="phone"
+        bindinput="inputChange"
+      />
+    </view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">居住地址</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{healthProfile.basicInfo.address}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempProfile.basicInfo.address}}"
+        placeholder="请输入居住地址"
+        data-field="basicInfo" 
+        data-subfield="address"
+        bindinput="inputChange"
+      />
+    </view>
+  </view>
+
+  <!-- 慢性病记录 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">慢性病记录</view>
+    <view wx:if="{{healthProfile.chronicDiseases.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无慢性病记录</view>
+    </view>
+    <view wx:else>
+      <view 
+        wx:for="{{healthProfile.chronicDiseases}}" 
+        wx:key="id"
+        class="disease-item"
+      >
+        <view class="disease-name font-lg font-medium text-primary">{{item.name}}</view>
+        <view class="disease-detail font-sm text-secondary">
+          确诊日期：{{item.diagnosisDate}} | 状态：{{item.status}}
+        </view>
+      </view>
+    </view>
+    <!-- 编辑模式下的慢性病管理 -->
+    <view wx:if="{{editMode}}">
+      <view wx:for="{{tempProfile.chronicDiseases}}" wx:key="id" class="disease-edit-item">
+        <view class="disease-edit-form">
+          <input 
+            class="form-input font-lg"
+            value="{{item.name}}"
+            placeholder="疾病名称"
+            data-index="{{index}}" 
+            data-field="name"
+            bindinput="chronicDiseaseChange"
+            style="margin-bottom: 20rpx;"
+          />
+          <input 
+            class="form-input font-lg"
+            value="{{item.diagnosisDate}}"
+            placeholder="确诊日期（YYYY-MM-DD）"
+            data-index="{{index}}" 
+            data-field="diagnosisDate"
+            bindinput="chronicDiseaseChange"
+            style="margin-bottom: 20rpx;"
+          />
+          <input 
+            class="form-input font-lg"
+            value="{{item.status}}"
+            placeholder="状态（如：稳定、不稳定）"
+            data-index="{{index}}" 
+            data-field="status"
+            bindinput="chronicDiseaseChange"
+          />
+        </view>
+        <button 
+          class="btn btn-danger" 
+          bindtap="deleteChronicDisease"
+          data-index="{{index}}"
+        >
+          删除
+        </button>
+      </view>
+      <button 
+        class="btn btn-secondary btn-large font-lg font-bold"
+        bindtap="addChronicDisease"
+        style="margin-top: 20rpx;"
+      >
+        添加慢性病
+      </button>
+    </view>
+  </view>
+
+  <!-- 用药记录 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">用药记录</view>
+    <view wx:if="{{healthProfile.medication.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无用药记录</view>
+    </view>
+    <view wx:else>
+      <view 
+        wx:for="{{healthProfile.medication}}" 
+        wx:key="id"
+        class="medication-item"
+      >
+        <view class="medication-name font-lg font-medium text-primary">{{item.name}}</view>
+        <view class="medication-detail font-sm text-secondary">
+           剂量：{{item.dosage}} | 服用时间：{{item.time}}
+        </view>
+      </view>
+    </view>
+    <!-- 编辑模式下的用药管理 -->
+    <view wx:if="{{editMode}}">
+      <view wx:for="{{tempProfile.medication}}" wx:key="id" class="medication-edit-item">
+        <view class="medication-edit-form">
+          <input 
+            class="form-input font-lg"
+            value="{{item.name}}"
+            placeholder="药物名称"
+            data-index="{{index}}" 
+            data-field="name"
+            bindinput="medicationChange"
+            style="margin-bottom: 20rpx;"
+          />
+          <input 
+            class="form-input font-lg"
+            value="{{item.dosage}}"
+            placeholder="剂量（如：1片/次，2次/日）"
+            data-index="{{index}}" 
+            data-field="dosage"
+            bindinput="medicationChange"
+            style="margin-bottom: 20rpx;"
+          />
+          <input 
+            class="form-input font-lg"
+            value="{{item.time}}"
+            placeholder="服用时间（如：早7:00，晚7:00）"
+            data-index="{{index}}" 
+            data-field="time"
+            bindinput="medicationChange"
+          />
+        </view>
+        <button 
+          class="btn btn-danger" 
+          bindtap="deleteMedication"
+          data-index="{{index}}"
+        >
+          删除
+        </button>
+      </view>
+      <button 
+        class="btn btn-secondary btn-large font-lg font-bold"
+        bindtap="addMedication"
+        style="margin-top: 20rpx;"
+      >
+        添加用药
+      </button>
+    </view>
+  </view>
+
+  <!-- 过敏史 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">过敏史</view>
+    <view class="form-item">
+      <view class="form-label font-lg font-medium text-primary">过敏药物/食物</view>
+      <view class="form-value" wx:if="{{!editMode}}">{{healthProfile.allergies || '无'}}</view>
+      <input 
+        wx:else 
+        class="form-input font-lg"
+        value="{{tempProfile.allergies}}"
+        placeholder="请输入过敏药物/食物，无则输入无"
+        data-field="allergies"
+        bindinput="inputChange"
+      />
+    </view>
+  </view>
+</view>
