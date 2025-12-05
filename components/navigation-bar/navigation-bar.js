@@ -28,12 +28,15 @@ Component({
   },
   lifetimes: {
     attached() {
-      // 简化初始化，避免复杂的样式计算
+      // 获取系统信息，设置安全区域顶部高度
+      const systemInfo = wx.getSystemInfoSync();
+      const safeAreaTop = systemInfo.statusBarHeight;
+      
       this.setData({
         ios: true,
         innerPaddingRight: 'padding-right: 90px',
         leftWidth: 'width: 90px',
-        safeAreaTop: ''
+        safeAreaTop: safeAreaTop + 'px'
       })
     },
   },

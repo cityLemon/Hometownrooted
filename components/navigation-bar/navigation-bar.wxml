@@ -1,4 +1,4 @@
-<view class="weui-navigation-bar">
+<view class="weui-navigation-bar" style="padding-top: {{safeAreaTop}};">
   <view class="weui-navigation-bar__inner" style="{{displayStyle}};">
 
     <!-- 标题 -->

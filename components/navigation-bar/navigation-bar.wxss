@@ -1,20 +1,24 @@
 .weui-navigation-bar {
   overflow: hidden;
-  color: rgba(0,0,0,.9);
+  color: #ffffff;
   flex: none;
+  background-color: #ff7800; /* 明亮的橙色背景 */
+  height: 88rpx; /* 与微信小程序胶囊按钮统一高度 */
+  padding-top: var(--status-bar-height); /* 为状态栏留出空间 */
 }
 
 .weui-navigation-bar__inner {
   position: relative;
   top: 0;
   left: 0;
-  height: 44px;
+  height: 88rpx; /* 与微信小程序胶囊按钮统一高度 */
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100%;
   box-sizing: border-box;
+  background-color: #ff7800; /* 明亮的橙色背景 */
 }
 
 .weui-navigation-bar__left {
