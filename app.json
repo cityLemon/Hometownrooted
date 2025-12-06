@@ -31,9 +31,10 @@
     "navigationBarBackgroundColor": "#ffffff"
   },
   "tabBar": {
-    "color": "#666666",
-    "selectedColor": "#ff7800",
-    "backgroundColor": "#ffffff",
+    "color": "#8898AA",
+    "selectedColor": "#2D64F0",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",
@@ -62,8 +63,8 @@
       {
         "pagePath": "pages/user/profile/profile",
         "text": "我的",
-        "iconPath": "images/tabbar/user.png",
-        "selectedIconPath": "images/tabbar/user-active.png"
+        "iconPath": "images/tabbar/user_temp.png",
+        "selectedIconPath": "images/tabbar/user-active_temp.png"
       }
     ]
   },

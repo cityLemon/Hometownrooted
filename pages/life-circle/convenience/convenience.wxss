@@ -1,10 +1,167 @@
 /* convenience.wxss - 便民服务样式 */
 
+/* CSS变量定义 */
+page {
+  --primary-color: #FF7800;  /* 橙色主题 */
+  --primary-light: #FF9A3C;
+  --primary-lightest: #FFF4E6;
+  --secondary-color: #FF9500;
+  --accent-color: #FF7800;
+  --success-color: #52C41A;
+  --warning-color: #FAAD14;
+  --error-color: #F5222D;
+  --info-color: #1890FF;
+  
+  --text-primary: #262626;
+  --text-secondary: #8C8C8C;
+  --text-muted: #BFBFBF;
+  
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F7F7F7;
+  --bg-tertiary: #F0F0F0;
+  
+  --border-color: #D9D9D9;
+  --divider-color: #F0F0F0;
+  
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  
+  --radius-xs: 8rpx;
+  --radius-sm: 12rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 24rpx;
+  --radius-xl: 32rpx;
+  --radius-full: 50%;
+  
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
+  --spacing-xxl: 64rpx;
+  
+  --font-size-xs: 22rpx;
+  --font-size-sm: 24rpx;
+  --font-size-base: 28rpx;
+  --font-size-lg: 32rpx;
+  --font-size-xl: 36rpx;
+  --font-size-xxl: 44rpx;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  --transition-base: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-fast: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 页面标题区域 */
+.page-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0rpx 30rpx 8rpx;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  margin-top: -10rpx; /* 与状态栏无缝衔接 */
+}
+
+.page-title {
+  font-size: 28rpx;
+  font-weight: normal;
+}
+
+/* 页面加载动画 */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.page-loader.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 8rpx solid var(--border-color);
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+  margin-bottom: 30rpx;
+}
+
+.loader-text {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  opacity: 0.8;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* 页面容器 */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  position: relative;
+  z-index: 1;
+}
+
+/* 顶部状态栏占位 */
+.status-bar-placeholder {
+  height: 0; /* 移除状态栏占位 */
+  background-color: var(--primary-color); /* 添加背景色 */
+}
+
+/* 离线状态提示 */
+.offline-tip {
+  position: fixed;
+  top: 88rpx; /* 适配状态栏 */
+  left: 0;
+  right: 0;
+  background-color: var(--warning-color);
+  color: white;
+  text-align: center;
+  padding: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  z-index: 1000;
+}
+
+
+
 /* 页面内容 */
 .page-content {
   padding: 30rpx;
+  flex: 1;
   background-color: var(--bg-secondary);
-  min-height: 100vh;
 }
 
 /* 区域标题 */

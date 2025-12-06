@@ -1,9 +1,47 @@
 <!-- profile.wxml - 健康档案管理 -->
 <page-meta>
-  <navigation-bar title="健康档案管理"></navigation-bar>
+  <navigation-bar title="健康守护"></navigation-bar>
 </page-meta>
 
-<view class="page-content">
+<!-- 页面加载动画 -->
+<view class="page-loader {{pageLoaded ? 'hidden' : ''}}">
+  <view class="loader-spinner"></view>
+  <text class="loader-text">加载中...</text>
+</view>
+
+<!-- 离线状态提示 -->
+<view class="offline-tip" wx:if="{{offline}}">
+  当前处于离线状态，部分功能可能受限
+</view>
+
+<!-- 顶部状态栏占位 -->
+<view class="status-bar-placeholder"></view>
+
+<!-- 页面容器 -->
+<view class="page-container" wx:if="{{pageLoaded}}">
+  
+  <!-- 页面内容 -->
+  <view class="page-content">
+  <!-- 顶部快捷功能区 -->
+  <view class="quick-actions">
+    <view class="quick-action-item" bindtap="goToEmergency">
+      <view class="quick-action-icon emergency-icon">🚨</view>
+      <view class="quick-action-text">紧急呼救</view>
+    </view>
+    <view class="quick-action-item" bindtap="goToMonitoring">
+      <view class="quick-action-icon monitoring-icon">💓</view>
+      <view class="quick-action-text">健康监测</view>
+    </view>
+    <view class="quick-action-item" bindtap="goToServiceBooking">
+      <view class="quick-action-icon service-icon">📅</view>
+      <view class="quick-action-text">服务预约</view>
+    </view>
+    <view class="quick-action-item" bindtap="shareProfile">
+      <view class="quick-action-icon share-icon">📤</view>
+      <view class="quick-action-text">分享档案</view>
+    </view>
+  </view>
+
   <!-- 编辑模式按钮 -->
   <view class="edit-mode-buttons" wx:if="{{!editMode}}">
     <button 
@@ -30,6 +68,49 @@
     >
       取消
     </button>
+  </view>
+
+  <!-- 健康数据概览 -->
+  <view class="health-overview">
+    <view class="overview-title">健康数据概览</view>
+    <view class="overview-cards">
+      <view class="overview-card">
+        <view class="overview-icon blood-pressure-icon">💉</view>
+        <view class="overview-info">
+          <view class="overview-value">{{healthProfile.vitals.bloodPressure || '120/80'}}</view>
+          <view class="overview-label">血压</view>
+        </view>
+        <view class="overview-trend {{healthProfile.vitalsTrend && healthProfile.vitalsTrend.bloodPressure === 'up' ? 'trend-up' : 'trend-down'}}">{{healthProfile.vitalsTrend && healthProfile.vitalsTrend.bloodPressure === 'up' ? '↑' : '↓'}}</view>
+      </view>
+      
+      <view class="overview-card">
+        <view class="overview-icon heart-rate-icon">❤️</view>
+        <view class="overview-info">
+          <view class="overview-value">{{healthProfile.vitals.heartRate || '72'}}</view>
+          <view class="overview-label">心率</view>
+        </view>
+        <view class="overview-trend {{healthProfile.vitalsTrend && healthProfile.vitalsTrend.heartRate === 'up' ? 'trend-up' : 'trend-down'}}">{{healthProfile.vitalsTrend && healthProfile.vitalsTrend.heartRate === 'up' ? '↑' : '↓'}}</view>
+      </view>
+      
+      <view class="overview-card">
+        <view class="overview-icon blood-sugar-icon">🩸</view>
+        <view class="overview-info">
+          <view class="overview-value">{{healthProfile.vitals.bloodSugar || '5.6'}}</view>
+          <view class="overview-label">血糖</view>
+        </view>
+        <view class="overview-trend {{healthProfile.vitalsTrend && healthProfile.vitalsTrend.bloodSugar === 'up' ? 'trend-up' : 'trend-down'}}">{{healthProfile.vitalsTrend && healthProfile.vitalsTrend.bloodSugar === 'up' ? '↑' : '↓'}}</view>
+      </view>
+      
+      <view class="overview-card">
+        <view class="overview-icon weight-icon">⚖️</view>
+        <view class="overview-info">
+          <view class="overview-value">{{healthProfile.vitals.weight || '65'}}</view>
+          <view class="overview-label">体重(kg)</view>
+        </view>
+        <view class="overview-trend {{healthProfile.vitalsTrend && healthProfile.vitalsTrend.weight === 'up' ? 'trend-up' : 'trend-down'}}">{{healthProfile.vitalsTrend && healthProfile.vitalsTrend.weight === 'up' ? '↑' : '↓'}}</view>
+      </view>
+    </view>
+    <view class="overview-note">最近更新: {{healthProfile.lastUpdateDate || '今天 14:30'}}</view>
   </view>
 
   <!-- 基本信息 -->
@@ -253,5 +334,53 @@
         bindinput="inputChange"
       />
     </view>
+  </view>
+
+  <!-- 就医记录 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">就医记录</view>
+    <view wx:if="{{healthProfile.medicalHistory.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无就医记录</view>
+    </view>
+    <view wx:else>
+      <view 
+        wx:for="{{healthProfile.medicalHistory}}" 
+        wx:key="id"
+        class="medical-item"
+        bindtap="viewMedicalDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="medical-date">{{item.date}}</view>
+        <view class="medical-hospital">{{item.hospital}}</view>
+        <view class="medical-diagnosis">{{item.diagnosis}}</view>
+        <view class="medical-arrow">></view>
+      </view>
+    </view>
+    <view class="view-more" bindtap="goToMedicalHistory" wx:if="{{healthProfile.medicalHistory.length > 0}}">
+      查看全部就医记录
+    </view>
+  </view>
+
+  <!-- 健康指标趋势 -->
+  <view class="card">
+    <view class="section-title font-xl font-bold text-primary">健康指标趋势</view>
+    <view class="chart-container">
+      <canvas canvas-id="healthChart" class="health-chart"></canvas>
+    </view>
+    <view class="chart-legend">
+      <view class="legend-item">
+        <view class="legend-color blood-pressure-color"></view>
+        <view class="legend-text">血压</view>
+      </view>
+      <view class="legend-item">
+        <view class="legend-color heart-rate-color"></view>
+        <view class="legend-text">心率</view>
+      </view>
+      <view class="legend-item">
+        <view class="legend-color blood-sugar-color"></view>
+        <view class="legend-text">血糖</view>
+      </view>
+    </view>
+  </view>
   </view>
 </view>

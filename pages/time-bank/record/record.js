@@ -1,6 +1,10 @@
 // record.js - 服务记录与兑换
 Page({
   data: {
+    // 页面加载状态
+    pageLoaded: false,
+    // 离线状态
+    offline: false,
     // 时间币余额
     timeCoinBalance: 120,
     // 服务记录列表
@@ -76,6 +80,13 @@ Page({
     console.log('Service record page loaded')
     // 从数据库获取服务记录和时间币余额
     this.loadServiceRecords()
+    
+    // 页面加载完成
+    this.setData({
+      pageLoaded: true
+    })
+    
+    this.setupNetworkListener()
   },
 
   onReady() {
@@ -197,6 +208,25 @@ Page({
     wx.showToast({
       title: `查看服务详情：${recordId}`,
       icon: 'none'
+    })
+  },
+  
+  // 设置网络状态监听
+  setupNetworkListener() {
+    // 获取当前网络状态
+    wx.getNetworkType({
+      success: (res) => {
+        this.setData({
+          offline: res.networkType === 'none'
+        })
+      }
+    })
+    
+    // 监听网络状态变化
+    wx.onNetworkStatusChange((res) => {
+      this.setData({
+        offline: !res.isConnected
+      })
     })
   }
 })

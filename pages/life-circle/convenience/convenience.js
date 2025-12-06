@@ -1,6 +1,10 @@
 // convenience.js - 便民服务
 Page({
   data: {
+    // 页面加载状态
+    pageLoaded: false,
+    // 离线状态
+    offline: false,
     // 便民服务列表
     services: [
       {
@@ -79,6 +83,13 @@ Page({
     console.log('Convenience service page loaded')
     // 从数据库获取便民服务列表和预约记录
     this.loadServices()
+    
+    // 页面加载完成
+    this.setData({
+      pageLoaded: true
+    })
+    // 设置网络状态监听
+    this.setupNetworkListener()
   },
 
   onReady() {
@@ -185,6 +196,25 @@ Page({
     wx.showToast({
       title: `查看预约记录：${recordId}`,
       icon: 'none'
+    })
+  },
+  
+  // 设置网络状态监听
+  setupNetworkListener() {
+    // 获取当前网络状态
+    wx.getNetworkType({
+      success: (res) => {
+        this.setData({
+          offline: res.networkType === 'none'
+        })
+      }
+    })
+    
+    // 监听网络状态变化
+    wx.onNetworkStatusChange((res) => {
+      this.setData({
+        offline: !res.isConnected
+      })
     })
   }
 })

@@ -1,6 +1,10 @@
 // profile.js - 个人信息
 Page({
   data: {
+    // 页面加载状态
+    pageLoaded: false,
+    // 离线状态
+    offline: false,
     // 用户信息
     userInfo: {
       avatarUrl: '/images/avatar/default.svg',
@@ -25,6 +29,14 @@ Page({
     console.log('User profile page loaded')
     // 从数据库获取用户信息
     this.loadUserInfo()
+    
+    // 页面加载完成
+    this.setData({
+      pageLoaded: true
+    })
+
+    // 设置网络状态监听
+    this.setupNetworkListener()
   },
 
   onReady() {
@@ -155,6 +167,25 @@ Page({
           // wx.redirectTo({ url: '/pages/login/login' })
         }
       }
+    })
+  },
+  
+  // 设置网络状态监听
+  setupNetworkListener() {
+    // 获取当前网络状态
+    wx.getNetworkType({
+      success: (res) => {
+        this.setData({
+          offline: res.networkType === 'none'
+        })
+      }
+    })
+    
+    // 监听网络状态变化
+    wx.onNetworkStatusChange((res) => {
+      this.setData({
+        offline: !res.isConnected
+      })
     })
   }
 })

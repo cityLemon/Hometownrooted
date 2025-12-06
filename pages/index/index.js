@@ -1,6 +1,8 @@
 // index.js
 Page({
   data: {
+    // 离线状态
+    offline: false,
     // 角色选项
     roles: [
       {
@@ -40,10 +42,10 @@ Page({
       }
     ],
     selectedRole: null,
-    // 按钮动画
-    buttonAnimation: '',
     // 页面加载动画状态
     pageLoaded: false,
+    // 当前轮播图索引
+    currentSwiperIndex: 0,
     // 轮播图数据
     swiperList: [
       {
@@ -102,6 +104,8 @@ Page({
     console.log('Index page loaded')
     // 检查登录状态
     this.checkLoginStatus()
+    // 监听网络状态变化
+    this.setupNetworkListener()
   },
   
   onReady() {
@@ -112,13 +116,6 @@ Page({
 
   // 初始化页面动画
   initPageAnimations() {
-    // 创建页面加载动画
-    const animation = wx.createAnimation({
-      duration: 800,
-      timingFunction: 'ease-out',
-      delay: 0
-    })
-
     // 为每个角色项添加加载动画
     const rolesWithAnimation = this.data.roles.map((role, index) => {
       const roleAnimation = wx.createAnimation({
@@ -137,24 +134,6 @@ Page({
     this.setData({
       roles: rolesWithAnimation,
       pageLoaded: true
-    }, () => {
-      // 初始化按钮动画
-      this.initButtonAnimation()
-    })
-  },
-
-  // 初始化按钮动画
-  initButtonAnimation() {
-    const buttonAnimation = wx.createAnimation({
-      duration: 800,
-      timingFunction: 'ease-out',
-      delay: 1000
-    })
-
-    buttonAnimation.opacity(1).translateY(0).step()
-    
-    this.setData({
-      buttonAnimation: buttonAnimation.export()
     }, () => {
       // 初始化快捷入口动画
       this.initQuickEntranceAnimations()
@@ -180,6 +159,24 @@ Page({
 
     this.setData({
       quickEntrances: quickEntrancesWithAnimation
+    }, () => {
+      // 初始化进入按钮动画
+      this.initEnterButtonAnimation()
+    })
+  },
+
+  // 初始化进入按钮动画
+  initEnterButtonAnimation() {
+    const buttonAnimation = wx.createAnimation({
+      duration: 800,
+      timingFunction: 'ease-out',
+      delay: 1600
+    })
+
+    buttonAnimation.opacity(1).translateY(0).step()
+    
+    this.setData({
+      enterButtonAnimation: buttonAnimation.export()
     })
   },
   
@@ -191,6 +188,25 @@ Page({
       // 未登录，跳转到登录页面
       // wx.navigateTo({ url: '/pages/login/login' })
     }
+  },
+  
+  // 设置网络状态监听
+  setupNetworkListener() {
+    // 获取当前网络状态
+    wx.getNetworkType({
+      success: (res) => {
+        this.setData({
+          offline: res.networkType === 'none'
+        })
+      }
+    })
+    
+    // 监听网络状态变化
+    wx.onNetworkStatusChange((res) => {
+      this.setData({
+        offline: !res.isConnected
+      })
+    })
   },
   
   // 选择角色
@@ -293,6 +309,41 @@ Page({
   swiperItemTap(e) {
     const url = e.currentTarget.dataset.url
     wx.navigateTo({ url })
+  },
+  
+  // 轮播图切换事件
+  onSwiperChange(e) {
+    this.setData({
+      currentSwiperIndex: e.detail.current
+    })
+  },
+  
+  // 上一张幻灯片
+  prevSlide() {
+    if (this.data.currentSwiperIndex > 0) {
+      this.setData({
+        currentSwiperIndex: this.data.currentSwiperIndex - 1
+      })
+    } else {
+      // 如果是第一张，则切换到最后一张
+      this.setData({
+        currentSwiperIndex: this.data.swiperList.length - 1
+      })
+    }
+  },
+  
+  // 下一张幻灯片
+  nextSlide() {
+    if (this.data.currentSwiperIndex < this.data.swiperList.length - 1) {
+      this.setData({
+        currentSwiperIndex: this.data.currentSwiperIndex + 1
+      })
+    } else {
+      // 如果是最后一张，则切换到第一张
+      this.setData({
+        currentSwiperIndex: 0
+      })
+    }
   },
   
   // 快捷入口点击事件

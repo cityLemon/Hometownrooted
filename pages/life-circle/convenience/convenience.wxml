@@ -1,9 +1,27 @@
 <!-- convenience.wxml - 便民服务 -->
 <page-meta>
-  <navigation-bar title="便民服务"></navigation-bar>
+  <navigation-bar title="生活圈"></navigation-bar>
 </page-meta>
 
-<view class="page-content">
+<!-- 页面加载动画 -->
+<view class="page-loader {{pageLoaded ? 'hidden' : ''}}">
+  <view class="loader-spinner"></view>
+  <text class="loader-text">加载中...</text>
+</view>
+
+<!-- 离线状态提示 -->
+<view class="offline-tip" wx:if="{{offline}}">
+  当前处于离线状态，部分功能可能受限
+</view>
+
+<!-- 顶部状态栏占位 -->
+<view class="status-bar-placeholder"></view>
+
+<!-- 页面容器 -->
+<view class="page-container" wx:if="{{pageLoaded}}">
+  
+  <!-- 页面内容 -->
+  <view class="page-content">
   <!-- 服务类型切换 -->
   <view class="service-type-tabs">
     <scroll-view scroll-x="true" enable-flex="true" class="scroll-view-horizontal">
@@ -120,5 +138,6 @@
         确认预约
       </button>
     </view>
+  </view>
   </view>
 </view>
