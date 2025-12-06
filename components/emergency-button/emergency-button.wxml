@@ -6,15 +6,7 @@
   <view class="button-wrapper" wx:if="{{status === 'idle'}}">
     <button 
       class="emergency-button" 
-      style="
-        background-color: {{color}};
-        color: white;
-        width: {{size === 'small' ? '200rpx' : (size === 'medium' ? '250rpx' : '300rpx')}};
-        height: {{size === 'small' ? '200rpx' : (size === 'medium' ? '250rpx' : '300rpx')}};
-        font-size: {{size === 'small' ? '32rpx' : (size === 'medium' ? '40rpx' : '48rpx')}};
-        border-radius: 50%;
-        box-shadow: var(--shadow-lg);
-      "
+      style="background-color: {{color}}; color: white; width: {{size === 'small' ? '200rpx' : (size === 'medium' ? '250rpx' : '300rpx')}}; height: {{size === 'small' ? '200rpx' : (size === 'medium' ? '250rpx' : '300rpx')}}; font-size: {{size === 'small' ? '32rpx' : (size === 'medium' ? '40rpx' : '48rpx')}}; border-radius: 50%; box-shadow: var(--shadow-lg);"
       bindtap="onButtonClick"
       disabled="{{disabled}}"
     >
@@ -30,10 +22,7 @@
     </view>
     <view class="countdown-text" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}};">秒后自动呼救</view>
     <!-- 取消按钮 -->
-    <button 
-      class="cancel-button" 
-      style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-top: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};"
-      bindtap="cancelCall"
+    <button class="cancel-button" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-top: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};" bindtap="cancelCall"
     >
       取消呼救
     </button>
@@ -68,10 +57,7 @@
       呼叫失败
     </view>
     <!-- 重试按钮 -->
-    <button 
-      class="retry-button" 
-      style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-top: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};"
-      bindtap="onButtonClick"
+    <button class="retry-button" style="font-size: {{size === 'small' ? '28rpx' : (size === 'medium' ? '32rpx' : '36rpx')}}; margin-top: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};" bindtap="onButtonClick"
     >
       重试
     </button>

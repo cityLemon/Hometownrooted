@@ -50,19 +50,19 @@ Page({
     swiperList: [
       {
         id: 1,
-        image: '/images/banner/banner1.svg',
+        image: '/images/banner/1.jpg',
         title: '乡村安土，守护您的健康',
         url: '/pages/health/profile/profile'
       },
       {
         id: 2,
-        image: '/images/banner/banner2.svg',
+        image: '/images/banner/2.jpg',
         title: '银龄互助，时间银行',
         url: '/pages/time-bank/record/record'
       },
       {
         id: 3,
-        image: '/images/banner/banner3.svg',
+        image: '/images/banner/3.jpg',
         title: '乡村生活圈，便民服务',
         url: '/pages/life-circle/convenience/convenience'
       }

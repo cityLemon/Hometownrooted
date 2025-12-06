@@ -1,14 +1,7 @@
 <!-- health-card.wxml - 健康卡片组件 -->
 <view 
   class="health-card" 
-  style="
-    background-color: var(--bg-primary);
-    border-radius: 16rpx;
-    box-shadow: var(--shadow-sm);
-    padding: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}};
-    min-height: {{size === 'small' ? '150rpx' : (size === 'medium' ? '200rpx' : '250rpx')}};
-    cursor: {{clickable ? 'pointer' : 'default'}};
-  "
+  style="background-color: var(--bg-primary); border-radius: 16rpx; box-shadow: var(--shadow-sm); padding: {{size === 'small' ? '20rpx' : (size === 'medium' ? '30rpx' : '40rpx')}}; min-height: {{size === 'small' ? '150rpx' : (size === 'medium' ? '200rpx' : '250rpx')}}; cursor: {{clickable ? 'pointer' : 'default'}};"
   bindtap="onCardClick"
 >
   <!-- 数据标签 -->
@@ -38,10 +31,7 @@
     <!-- 状态指示器 -->
     <view 
       class="health-card-status" 
-      style="
-        font-size: {{size === 'small' ? '24rpx' : (size === 'medium' ? '28rpx' : '32rpx')}};
-        color: {{data.status === 'normal' ? '#52c41a' : (data.status === 'warning' ? '#faad14' : '#f5222d')}};
-      "
+      style="font-size: {{size === 'small' ? '24rpx' : (size === 'medium' ? '28rpx' : '32rpx')}}; color: {{data.status === 'normal' ? '#52c41a' : (data.status === 'warning' ? '#faad14' : '#f5222d')}};"
     >
       {{data.status === 'normal' ? '正常' : (data.status === 'warning' ? '警告' : '危险')}}
     </view>
