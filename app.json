@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/auth/login/login",
+    "pages/auth/register/register",
     "pages/health/profile/profile",
     "pages/health/emergency/emergency",
     "pages/health/monitoring/monitoring",
@@ -26,7 +28,7 @@
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationStyle": "custom",
+    "navigationStyle": "default",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ffffff"
   },
@@ -63,8 +65,8 @@
       {
         "pagePath": "pages/user/profile/profile",
         "text": "我的",
-        "iconPath": "images/tabbar/user_temp.png",
-        "selectedIconPath": "images/tabbar/user-active_temp.png"
+        "iconPath": "images/tabbar/user.png",
+        "selectedIconPath": "images/tabbar/user-active.png"
       }
     ]
   },
@@ -73,12 +75,6 @@
   "permission": {
     "scope.userLocation": {
       "desc": "您的位置信息将用于互助社区地图和紧急呼救定位"
-    },
-    "scope.record": {
-      "desc": "您的语音将用于语音导航功能"
-    },
-    "scope.userInfo": {
-      "desc": "您的基本信息将用于用户身份识别"
     }
   }
 }

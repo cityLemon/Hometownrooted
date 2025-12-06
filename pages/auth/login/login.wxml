@@ -1,0 +1,89 @@
+<!--pages/auth/login/login.wxml-->
+<view class="auth-container">
+  <view class="auth-header">
+    <image class="logo" src="/images/roles/elder.svg" mode="aspectFit"></image>
+    <text class="app-title">乡村安土</text>
+    <text class="app-subtitle">智慧乡村生活服务平台</text>
+  </view>
+
+  <view class="auth-form">
+    <view class="form-item">
+      <text class="label">用户名/手机号</text>
+      <input 
+        class="input" 
+        placeholder="请输入用户名或手机号" 
+        value="{{username}}"
+        bindinput="onUsernameInput"
+        maxlength="20"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="label">密码</text>
+      <view class="password-input">
+        <input 
+          class="input" 
+          placeholder="请输入密码" 
+          password="{{!showPassword}}"
+          value="{{password}}"
+          bindinput="onPasswordInput"
+          maxlength="20"
+        />
+        <image 
+          class="eye-icon" 
+          src="{{showPassword ? '/images/eye-open.svg' : '/images/eye-close.svg'}}"
+          bindtap="togglePassword"
+        ></image>
+      </view>
+    </view>
+
+    <view class="form-options">
+      <checkbox-group bindchange="onRememberChange">
+        <label class="remember-me">
+          <checkbox value="1" checked="{{rememberMe}}"/>
+          <text>记住我</text>
+        </label>
+      </checkbox-group>
+      <text class="forgot-password" bindtap="onForgotPassword">忘记密码？</text>
+    </view>
+
+    <button class="login-btn" bindtap="onLogin" loading="{{isLoading}}">
+      {{isLoading ? '登录中...' : '登录'}}
+    </button>
+
+    <view class="register-section">
+      <text>还没有账号？</text>
+      <text class="register-link" bindtap="onRegister">立即注册</text>
+    </view>
+
+    <!-- 快速登录选项 -->
+    <view class="quick-login">
+      <view class="divider">
+        <view class="line"></view>
+        <text class="divider-text">快速登录</text>
+        <view class="line"></view>
+      </view>
+      
+      <view class="quick-login-options">
+        <view class="quick-login-item" bindtap="quickLogin" data-role="elder">
+          <image class="quick-icon" src="/images/roles/elder.svg"></image>
+          <text>老人体验</text>
+        </view>
+        <view class="quick-login-item" bindtap="quickLogin" data-role="volunteer">
+          <image class="quick-icon" src="/images/roles/volunteer.svg"></image>
+          <text>志愿者体验</text>
+        </view>
+        <view class="quick-login-item" bindtap="quickLogin" data-role="admin">
+          <image class="quick-icon" src="/images/roles/admin.svg"></image>
+          <text>管理员体验</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 页面加载动画 -->
+  <view class="page-loader {{isLoading ? '' : 'hidden'}}">
+    <view class="loader-spinner"></view>
+    <text class="loader-text">正在登录...</text>
+  </view>
+</view>

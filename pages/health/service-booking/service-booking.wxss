@@ -1,1 +1,271 @@
 /* pages/health/service-booking/service-booking.wxss */
+
+.page-container {
+  padding: 20rpx;
+  background-color: var(--bg-secondary);
+  min-height: 100vh;
+}
+
+/* 服务分类 */
+.service-categories {
+  margin-bottom: 40rpx;
+}
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.category-item {
+  flex: 1;
+  min-width: 200rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  padding: 30rpx 20rpx;
+  text-align: center;
+  border: 2rpx solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.category-item.selected {
+  background-color: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.category-icon {
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
+}
+
+.category-name {
+  font-size: 28rpx;
+}
+
+/* 服务列表 */
+.service-list-section {
+  margin-bottom: 40rpx;
+}
+
+.service-item {
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  border: 2rpx solid var(--border-color);
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.service-name {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.service-price {
+  font-size: 32rpx;
+  color: var(--primary-color);
+}
+
+.service-description {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 15rpx;
+  line-height: 1.5;
+}
+
+.service-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15rpx;
+}
+
+.service-duration,
+.service-provider {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.service-rating {
+  display: flex;
+  align-items: center;
+}
+
+.rating-stars {
+  color: #ffa500;
+  margin-right: 10rpx;
+}
+
+.rating-count {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+/* 我的预约 */
+.my-bookings-section {
+  margin-bottom: 40rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.view-all {
+  font-size: 28rpx;
+  color: var(--primary-color);
+}
+
+.booking-item {
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  border: 2rpx solid var(--border-color);
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.booking-service {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.booking-status {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}
+
+.status-confirmed {
+  background-color: #f0f9ff;
+  color: #52c41a;
+  border: 2rpx solid #b7eb8f;
+}
+
+.status-pending {
+  background-color: #fffbe6;
+  color: #faad14;
+  border: 2rpx solid #ffe58f;
+}
+
+.status-cancelled {
+  background-color: #fff1f0;
+  color: #f5222d;
+  border: 2rpx solid #ffa39e;
+}
+
+.booking-info {
+  margin-bottom: 20rpx;
+}
+
+.booking-datetime,
+.booking-provider {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-bottom: 10rpx;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 空状态 */
+.empty-text {
+  text-align: center;
+  padding: 60rpx 0;
+  color: var(--text-secondary);
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 20rpx 40rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid var(--border-color);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 加载动画 */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.page-loader.hidden {
+  display: none;
+}
+
+.loader-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loader-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+/* 底部导航占位 */
+.bottom-nav-placeholder {
+  height: 120rpx;
+}

@@ -18,7 +18,7 @@
 <view class="status-bar-placeholder"></view>
 
 <!-- 页面容器 -->
-<view class="page-container">
+<view class="page-container" bindtap="onPageTap">
   <!-- 轮播图区域 -->
   <view class="swiper-section">
     <view class="swiper-container">
@@ -143,6 +143,14 @@
             <view class="role-decoration"></view>
           </view>
         </view>
+      </view>
+      
+      <!-- 进入角色按钮 -->
+      <view class="enter-role-btn-container" wx:if="{{selectedRole}}">
+        <button class="enter-role-btn" bindtap="enterRole" animation="{{enterButtonAnimation}}">
+          <text>进入 {{selectedRoleName}}</text>
+          <text class="arrow">→</text>
+        </button>
       </view>
     </view>
 

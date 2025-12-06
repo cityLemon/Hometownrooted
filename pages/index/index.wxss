@@ -755,6 +755,76 @@ page::after {
   }
 }
 
+/* 进入按钮样式 */
+.enter-role-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  padding: 0 var(--spacing-lg);
+}
+
+.enter-role-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  min-width: 200rpx;
+}
+
+.enter-role-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.enter-role-btn:hover {
+  transform: translateY(-2rpx);
+  box-shadow: var(--shadow-lg);
+}
+
+.enter-role-btn:hover::before {
+  left: 100%;
+}
+
+.enter-role-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.enter-role-btn-text {
+  position: relative;
+  z-index: 1;
+}
+
+.enter-role-btn-arrow {
+  width: 24rpx;
+  height: 24rpx;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.enter-role-btn:hover .enter-role-btn-arrow {
+  transform: translateX(4rpx);
+}
+
 /* -------------------
   快捷入口样式
 -------------------- */

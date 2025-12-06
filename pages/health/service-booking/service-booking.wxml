@@ -1,2 +1,107 @@
 <!--pages/health/service-booking/service-booking.wxml-->
-<text>pages/health/service-booking/service-booking.wxml</text>
+<page-meta>
+  <navigation-bar title="服务预约"></navigation-bar>
+</page-meta>
+
+<!-- 页面加载动画 -->
+<view class="page-loader {{pageLoaded ? 'hidden' : ''}}">
+  <view class="loader-spinner"></view>
+  <text class="loader-text">加载中...</text>
+</view>
+
+<!-- 顶部状态栏占位 -->
+<view class="status-bar-placeholder"></view>
+
+<!-- 页面容器 -->
+<view class="page-container" wx:if="{{pageLoaded}}">
+  <!-- 服务分类 -->
+  <view class="service-categories">
+    <view class="section-title font-xl font-bold text-primary">服务分类</view>
+    <view class="category-grid">
+      <view 
+        wx:for="{{serviceCategories}}" 
+        wx:key="id"
+        class="category-item {{selectedCategory === item.id ? 'selected' : ''}}"
+        data-category="{{item.id}}"
+        bindtap="selectCategory"
+      >
+        <view class="category-icon">{{item.icon}}</view>
+        <view class="category-name font-lg font-medium text-primary">{{item.name}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 可预约服务列表 -->
+  <view class="service-list-section">
+    <view class="section-title font-xl font-bold text-primary">可预约服务</view>
+    <view wx:if="{{availableServices.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无可用服务</view>
+    </view>
+    <view wx:else>
+      <view 
+        wx:for="{{availableServices}}" 
+        wx:key="id"
+        class="service-item card"
+        data-service="{{item}}"
+        bindtap="selectService"
+      >
+        <view class="service-header">
+          <view class="service-name font-lg font-bold text-primary">{{item.name}}</view>
+          <view class="service-price font-lg font-bold text-primary">¥{{item.price}}</view>
+        </view>
+        <view class="service-description font-md text-secondary">{{item.description}}</view>
+        <view class="service-info">
+          <view class="service-duration font-sm text-secondary">⏱️ {{item.duration}}分钟</view>
+          <view class="service-provider font-sm text-secondary">🏥 {{item.provider}}</view>
+        </view>
+        <view class="service-rating">
+          <text class="rating-stars">{{item.rating}}</text>
+          <text class="rating-count font-sm text-secondary">({{item.reviewCount}}条评价)</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的预约 -->
+  <view class="my-bookings-section">
+    <view class="section-header">
+      <view class="section-title font-xl font-bold text-primary">我的预约</view>
+      <view class="view-all font-md text-primary" bindtap="viewAllBookings">查看全部</view>
+    </view>
+    <view wx:if="{{myBookings.length === 0}}">
+      <view class="empty-text font-lg text-secondary">暂无预约记录</view>
+    </view>
+    <view wx:else>
+      <view 
+        wx:for="{{myBookings}}" 
+        wx:key="id"
+        class="booking-item card"
+        data-booking="{{item}}"
+        bindtap="viewBookingDetail"
+      >
+        <view class="booking-header">
+          <view class="booking-service font-lg font-bold text-primary">{{item.serviceName}}</view>
+          <view class="booking-status font-sm {{item.status === 'confirmed' ? 'status-confirmed' : (item.status === 'pending' ? 'status-pending' : 'status-cancelled')}}">
+            {{item.statusText}}
+          </view>
+        </view>
+        <view class="booking-info">
+          <view class="booking-datetime font-md text-secondary">📅 {{item.date}} {{item.time}}</view>
+          <view class="booking-provider font-md text-secondary">🏥 {{item.provider}}</view>
+        </view>
+        <view class="booking-actions" wx:if="{{item.status === 'pending' || item.status === 'confirmed'}}">
+          <button 
+            class="btn btn-danger font-sm"
+            data-id="{{item.id}}"
+            bindtap="cancelBooking"
+          >
+            取消预约
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部导航 -->
+<view class="bottom-nav-placeholder"></view>

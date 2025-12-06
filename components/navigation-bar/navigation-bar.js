@@ -29,7 +29,7 @@ Component({
   lifetimes: {
     attached() {
       // 获取系统信息，设置安全区域顶部高度
-      const systemInfo = wx.getSystemInfoSync();
+      const systemInfo = wx.getWindowInfo();
       const safeAreaTop = systemInfo.statusBarHeight;
       
       this.setData({

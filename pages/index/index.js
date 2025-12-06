@@ -3,6 +3,8 @@ Page({
   data: {
     // 离线状态
     offline: false,
+    // 双击检测时间戳
+    lastTapTime: 0,
     // 角色选项
     roles: [
       {
@@ -42,6 +44,7 @@ Page({
       }
     ],
     selectedRole: null,
+    selectedRoleName: '',
     // 页面加载动画状态
     pageLoaded: false,
     // 当前轮播图索引
@@ -182,12 +185,74 @@ Page({
   
   // 检查登录状态
   checkLoginStatus() {
-    // 模拟检查登录状态
-    const isLogin = wx.getStorageSync('isLogin')
-    if (!isLogin) {
-      // 未登录，跳转到登录页面
-      // wx.navigateTo({ url: '/pages/login/login' })
+    const app = getApp()
+    
+    // 如果用户已登录，隐藏首页，跳转到对应角色页面
+    if (app.globalData.isLoggedIn && app.globalData.userInfo) {
+      this.redirectToRolePage(app.globalData.userInfo.role_name)
     }
+  },
+
+  // 双击事件处理
+  onDoubleTap() {
+    console.log('双击事件触发')
+    this.showLoginDialog()
+  },
+
+  // 显示登录对话框
+  showLoginDialog() {
+    wx.showActionSheet({
+      itemList: ['登录账号', '注册账号'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 登录
+          wx.navigateTo({
+            url: '/pages/auth/login/login'
+          })
+        } else if (res.tapIndex === 1) {
+          // 注册
+          wx.navigateTo({
+            url: '/pages/auth/register/register'
+          })
+        }
+      },
+      fail: (res) => {
+        console.log(res.errMsg)
+      }
+    })
+  },
+
+  // 跳转到对应角色页面
+  redirectToRolePage(roleName) {
+    let url = ''
+    switch (roleName) {
+      case '老人':
+      case 'elder':
+        url = '/pages/health/profile/profile'
+        break
+      case '志愿者':
+      case 'volunteer':
+        url = '/pages/time-bank/record/record'
+        break
+      case '管理员':
+      case 'admin':
+        url = '/pages/admin/service-manage/service-manage'
+        break
+      case '政府人员':
+      case 'government':
+        url = '/pages/admin/data-board/data-board'
+        break
+      case '企业CSR':
+      case 'csr':
+        url = '/pages/care/adoption/adoption'
+        break
+      default:
+        url = '/pages/health/profile/profile'
+    }
+
+    wx.reLaunch({
+      url: url
+    })
   },
   
   // 设置网络状态监听
@@ -214,26 +279,10 @@ Page({
     const roleId = e.currentTarget.dataset.roleId
     const roleIndex = e.currentTarget.dataset.index
     
-    // 如果点击的是已选中的角色，则取消选中
+    // 如果点击的是已选中的角色，则直接跳转到对应页面
     if (this.data.selectedRole === roleId) {
-      // 取消选中动画
-      const unselectAnimation = wx.createAnimation({
-        duration: 300,
-        timingFunction: 'ease-out'
-      })
-      unselectAnimation.scale(1).opacity(1).step()
-      
-      const updatedRoles = this.data.roles.map((role, index) => {
-        if (index === roleIndex) {
-          role.animation = unselectAnimation.export()
-        }
-        return role
-      })
-      
-      this.setData({
-        selectedRole: null,
-        roles: updatedRoles
-      })
+      // 直接跳转到对应角色页面
+      this.enterRole()
       return
     }
 
@@ -264,8 +313,12 @@ Page({
       return role
     })
 
+    // 获取选中角色的名称
+    const selectedRoleName = this.data.roles.find(role => role.id === roleId)?.name || ''
+
     this.setData({
       selectedRole: roleId,
+      selectedRoleName: selectedRoleName,
       roles: updatedRoles
     })
   },
@@ -280,24 +333,32 @@ Page({
       return
     }
     
+    console.log('进入角色功能，选中角色：', this.data.selectedRole)
+    
     // 根据角色跳转到相应页面
     switch (this.data.selectedRole) {
       case 'elder':
+        console.log('跳转到健康守护页面')
         wx.switchTab({ url: '/pages/health/profile/profile' })
         break
       case 'volunteer':
+        console.log('跳转到时间银行页面')
         wx.switchTab({ url: '/pages/time-bank/record/record' })
         break
       case 'admin':
+        console.log('跳转到服务管理页面')
         wx.navigateTo({ url: '/pages/admin/service-manage/service-manage' })
         break
       case 'government':
+        console.log('跳转到数据面板页面')
         wx.navigateTo({ url: '/pages/admin/data-board/data-board' })
         break
       case 'csr':
+        console.log('跳转到领养中心页面')
         wx.navigateTo({ url: '/pages/care/adoption/adoption' })
         break
       default:
+        console.log('角色不存在：', this.data.selectedRole)
         wx.showToast({
           title: '角色不存在',
           icon: 'none'
@@ -357,6 +418,30 @@ Page({
     wx.showToast({
       title: '语音导航功能开发中',
       icon: 'none'
+    })
+  },
+
+  // 页面点击事件（用于双击检测）
+  onPageTap(e) {
+    const currentTime = Date.now()
+    const lastTapTime = this.data.lastTapTime || 0
+    const tapInterval = currentTime - lastTapTime
+    
+    console.log('页面点击事件触发', {
+      currentTime,
+      lastTapTime,
+      tapInterval,
+      selectedRole: this.data.selectedRole
+    })
+    
+    // 双击间隔小于500ms
+    if (tapInterval < 500 && tapInterval > 0) {
+      console.log('双击事件触发，执行角色跳转')
+      this.enterRole()
+    }
+    
+    this.setData({
+      lastTapTime: currentTime
     })
   }
 })

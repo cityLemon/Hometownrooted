@@ -36,9 +36,9 @@
       <view class="quick-action-icon service-icon">📅</view>
       <view class="quick-action-text">服务预约</view>
     </view>
-    <view class="quick-action-item" bindtap="shareProfile">
-      <view class="quick-action-icon share-icon">📤</view>
-      <view class="quick-action-text">分享档案</view>
+    <view class="quick-action-item" bindtap="showUserMenu">
+      <view class="quick-action-icon user-menu-icon">👤</view>
+      <view class="quick-action-text">用户菜单</view>
     </view>
   </view>
 

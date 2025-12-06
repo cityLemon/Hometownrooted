@@ -158,6 +158,67 @@ Page({
     })
   },
 
+  // 显示用户菜单（切换角色、退出登录）
+  showUserMenu() {
+    const app = getApp()
+    const userInfo = app.globalData.userInfo
+    
+    if (!userInfo) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+      return
+    }
+
+    wx.showActionSheet({
+      itemList: ['切换角色', '退出登录'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 切换角色
+          this.switchRole()
+        } else if (res.tapIndex === 1) {
+          // 退出登录
+          this.logout()
+        }
+      }
+    })
+  },
+
+  // 切换角色
+  switchRole() {
+    wx.showModal({
+      title: '切换角色',
+      content: '确定要切换到其他角色吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 清除当前登录状态
+          const app = getApp()
+          app.clearLoginData()
+          
+          // 跳转到首页
+          wx.reLaunch({
+            url: '/pages/index/index'
+          })
+        }
+      }
+    })
+  },
+
+  // 退出登录
+  logout() {
+    wx.showModal({
+      title: '退出登录',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const app = getApp()
+          app.logout()
+        }
+      }
+    })
+  },
+
   // 绘制健康指标图表
   drawHealthChart() {
     const ctx = wx.createCanvasContext('healthChart', this)

@@ -1,10 +1,5 @@
 {
-  "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
-  },
-  "navigationBarTitleText": "首页",
-  "navigationBarBackgroundColor": "#ff7800",
-  "navigationBarTextStyle": "white",
-  "enablePullDownRefresh": false,
-  "disableScroll": false
+  "navigationStyle": "default",
+  "navigationBarTitleText": "乡村安土",
+  "enablePullDownRefresh": false
 }

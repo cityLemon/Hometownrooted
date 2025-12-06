@@ -1,12 +1,5 @@
 {
-  "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
-  },
+  "navigationStyle": "default",
   "navigationBarTitleText": "生活圈",
-  "navigationBarBackgroundColor": "#ff7800",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#F7F8FC",
-  "backgroundTextStyle": "dark",
-  "enablePullDownRefresh": false,
-  "disableScroll": false
+  "enablePullDownRefresh": false
 }
