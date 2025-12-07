@@ -95,9 +95,9 @@ App({
   logout() {
     this.clearLoginData()
     
-    // 跳转到登录页面
+    // 跳转到首页（使用reLaunch确保显示tabBar）
     wx.reLaunch({
-      url: '/pages/auth/login/login'
+      url: '/pages/index/index'
     })
   },
 

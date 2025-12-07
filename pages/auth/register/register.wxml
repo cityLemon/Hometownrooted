@@ -58,12 +58,13 @@
     <view class="form-item">
       <text class="label">用户名</text>
       <input 
-        class="input" 
+        class="input {{!validation.username.valid ? 'error' : ''}}" 
         placeholder="请输入用户名（3-20位）" 
         value="{{username}}"
         bindinput="onUsernameInput"
         maxlength="20"
       />
+      <text class="error-message" wx:if="{{!validation.username.valid}}">{{validation.username.message}}</text>
     </view>
 
     <view class="form-item">
@@ -80,20 +81,21 @@
     <view class="form-item">
       <text class="label">手机号</text>
       <input 
-        class="input" 
+        class="input {{!validation.phone.valid ? 'error' : ''}}" 
         placeholder="请输入手机号" 
         value="{{phone}}"
         bindinput="onPhoneInput"
         type="number"
         maxlength="11"
       />
+      <text class="error-message" wx:if="{{!validation.phone.valid}}">{{validation.phone.message}}</text>
     </view>
 
     <view class="form-item">
       <text class="label">密码</text>
       <view class="password-input">
         <input 
-          class="input" 
+          class="input {{!validation.password.valid ? 'error' : ''}}" 
           placeholder="请输入密码（6-20位）" 
           password="{{!showPassword}}"
           value="{{password}}"
@@ -106,13 +108,22 @@
           bindtap="togglePassword"
         ></image>
       </view>
+      <text class="error-message" wx:if="{{!validation.password.valid}}">{{validation.password.message}}</text>
+      
+      <!-- 密码强度指示器 -->
+      <view class="password-strength" wx:if="{{password && passwordStrength > 0}}">
+        <view class="strength-bar">
+          <view class="strength-fill" style="width: {{(passwordStrength/5)*100}}%; background-color: {{passwordStrengthColor}}"></view>
+        </view>
+        <text class="strength-text" style="color: {{passwordStrengthColor}}">{{passwordStrengthText}}</text>
+      </view>
     </view>
 
     <view class="form-item">
       <text class="label">确认密码</text>
       <view class="password-input">
         <input 
-          class="input" 
+          class="input {{!validation.confirmPassword.valid ? 'error' : ''}}" 
           placeholder="请再次输入密码" 
           password="{{!showConfirmPassword}}"
           value="{{confirmPassword}}"
@@ -125,6 +136,7 @@
           bindtap="toggleConfirmPassword"
         ></image>
       </view>
+      <text class="error-message" wx:if="{{!validation.confirmPassword.valid}}">{{validation.confirmPassword.message}}</text>
     </view>
 
     <!-- 详细信息 -->
@@ -149,13 +161,14 @@
       <view class="form-item half">
         <text class="label">年龄</text>
         <input 
-          class="input" 
+          class="input {{!validation.age.valid ? 'error' : ''}}" 
           placeholder="年龄" 
           value="{{age}}"
           bindinput="onAgeInput"
           type="number"
           maxlength="3"
         />
+        <text class="error-message" wx:if="{{!validation.age.valid}}">{{validation.age.message}}</text>
       </view>
     </view>
 
@@ -183,7 +196,7 @@
       </checkbox-group>
     </view>
 
-    <button class="register-btn" bindtap="onRegister" loading="{{isLoading}}" disabled="{{!agreementChecked || !selectedRole}}">
+    <button class="register-btn" bindtap="onRegister" loading="{{isLoading}}" disabled="{{!isFormValid || isLoading}}">
       {{isLoading ? '注册中...' : '注册'}}
     </button>
 

@@ -100,17 +100,30 @@ Page({
         url: '/pages/time-bank/mall/mall',
         animation: ''
       }
-    ]
+    ],
+    showDebugPanel: false,  // 调试面板显示状态
+    enterButtonAnimation: '',  // 进入按钮动画
+    pageLoaded: false  // 页面加载状态
   },
   
   onLoad() {
     console.log('Index page loaded')
+    
+    // 强制显示tabBar
+    this.forceShowTabBar()
+    
     // 检查登录状态
     this.checkLoginStatus()
     // 监听网络状态变化
     this.setupNetworkListener()
   },
   
+  onShow() {
+    console.log('Index page shown')
+    // 确保tabBar显示
+    this.forceShowTabBar()
+  },
+
   onReady() {
     console.log('Index page ready')
     // 页面加载完成后执行动画
@@ -187,9 +200,95 @@ Page({
   checkLoginStatus() {
     const app = getApp()
     
+    // 临时注释掉自动重定向，让用户可以看到index页面的tabBar
     // 如果用户已登录，隐藏首页，跳转到对应角色页面
+    // if (app.globalData.isLoggedIn && app.globalData.userInfo) {
+    //   this.redirectToRolePage(app.globalData.userInfo.role_name)
+    // }
+    // 如果用户未登录，允许以游客身份访问首页
+    // else {
+    //   console.log('用户未登录，以游客身份访问首页')
+    //   // 可以在这里添加游客模式的特殊处理
+    // }
+    
+    console.log('当前登录状态:', app.globalData.isLoggedIn ? '已登录' : '未登录')
     if (app.globalData.isLoggedIn && app.globalData.userInfo) {
-      this.redirectToRolePage(app.globalData.userInfo.role_name)
+      console.log('用户信息:', app.globalData.userInfo)
+      console.log('注意: 已临时禁用自动重定向，如需恢复请取消注释')
+    }
+  },
+
+  // 显示调试面板
+  showDebugPanel() {
+    this.setData({
+      showDebugPanel: true
+    })
+  },
+
+  // 隐藏调试面板
+  hideDebugPanel() {
+    this.setData({
+      showDebugPanel: false
+    })
+  },
+
+  // 强制显示tabBar
+  forceShowTabBar() {
+    if (wx.showTabBar) {
+      wx.showTabBar({
+        animation: false,
+        success: () => {
+          console.log('TabBar强制显示成功')
+        },
+        fail: (err) => {
+          console.log('TabBar强制显示失败:', err)
+        }
+      })
+    }
+    
+    // 额外检查：确保tabBar配置正确
+    if (wx.getTabBar) {
+      try {
+        const tabBar = wx.getTabBar()
+        console.log('TabBar对象:', tabBar)
+      } catch (e) {
+        console.log('获取TabBar对象失败:', e)
+      }
+    }
+  },
+
+  // 清除登录数据
+  clearLoginData() {
+    try {
+      // 清除本地存储
+      wx.removeStorageSync('token')
+      wx.removeStorageSync('userInfo')
+      
+      // 清除全局数据
+      const app = getApp()
+      app.globalData.userInfo = null
+      app.globalData.token = null
+      app.globalData.isLoggedIn = false
+      app.globalData.currentRole = null
+      
+      wx.showToast({
+        title: '登录数据已清除',
+        icon: 'success',
+        duration: 1500
+      })
+      
+      // 重启应用到首页
+      setTimeout(() => {
+        wx.reLaunch({
+          url: '/pages/index/index'
+        })
+      }, 1500)
+      
+    } catch (error) {
+      wx.showToast({
+        title: '清除失败',
+        icon: 'error'
+      })
     }
   },
 
@@ -335,35 +434,86 @@ Page({
     
     console.log('进入角色功能，选中角色：', this.data.selectedRole)
     
-    // 根据角色跳转到相应页面
-    switch (this.data.selectedRole) {
-      case 'elder':
-        console.log('跳转到健康守护页面')
-        wx.switchTab({ url: '/pages/health/profile/profile' })
-        break
-      case 'volunteer':
-        console.log('跳转到时间银行页面')
-        wx.switchTab({ url: '/pages/time-bank/record/record' })
-        break
-      case 'admin':
-        console.log('跳转到服务管理页面')
-        wx.navigateTo({ url: '/pages/admin/service-manage/service-manage' })
-        break
-      case 'government':
-        console.log('跳转到数据面板页面')
-        wx.navigateTo({ url: '/pages/admin/data-board/data-board' })
-        break
-      case 'csr':
-        console.log('跳转到领养中心页面')
-        wx.navigateTo({ url: '/pages/care/adoption/adoption' })
-        break
-      default:
-        console.log('角色不存在：', this.data.selectedRole)
-        wx.showToast({
-          title: '角色不存在',
-          icon: 'none'
-        })
+    // 检查用户是否已登录，如果未登录则跳转到登录页面
+    const app = getApp()
+    if (!app.globalData.isLoggedIn) {
+      console.log('用户未登录，跳转到登录页面')
+      wx.showModal({
+        title: '需要登录',
+        content: '使用此功能需要登录，是否现在登录？',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({
+              url: '/pages/auth/login/login'
+            })
+          }
+        }
+      })
+      return
     }
+
+    // 添加按钮动画
+    const buttonAnimation = wx.createAnimation({
+      duration: 300,
+      timingFunction: 'ease-out'
+    })
+
+    buttonAnimation.scale(0.95).step()
+    buttonAnimation.scale(1).step()
+
+    this.setData({
+      enterButtonAnimation: buttonAnimation.export()
+    })
+
+    // 延迟跳转，让用户看到动画效果
+    setTimeout(() => {
+      let url = ''
+      switch (this.data.selectedRole) {
+        case 'elder':
+          url = '/pages/health/profile/profile'
+          break
+        case 'volunteer':
+          url = '/pages/time-bank/record/record'
+          break
+        case 'admin':
+          url = '/pages/admin/service-manage/service-manage'
+          break
+        case 'government':
+          url = '/pages/admin/data-board/data-board'
+          break
+        case 'csr':
+          url = '/pages/care/adoption/adoption'
+          break
+        default:
+          url = '/pages/health/profile/profile'
+      }
+
+      // 检查目标页面是否是tabBar页面，使用合适的跳转方式
+      const tabBarPages = [
+        '/pages/index/index',
+        '/pages/health/profile/profile',
+        '/pages/time-bank/record/record',
+        '/pages/life-circle/convenience/convenience',
+        '/pages/user/profile/profile'
+      ]
+      
+      if (tabBarPages.includes(url)) {
+        // 使用switchTab跳转到tabBar页面，确保tabBar显示
+        wx.switchTab({
+          url: url,
+          success: () => {
+            console.log('switchTab跳转成功:', url)
+          },
+          fail: (err) => {
+            console.error('switchTab跳转失败:', err)
+            wx.navigateTo({ url: url })
+          }
+        })
+      } else {
+        // 非tabBar页面使用navigateTo
+        wx.navigateTo({ url: url })
+      }
+    }, 300)
   },
   
   // 轮播图点击事件
@@ -410,6 +560,25 @@ Page({
   // 快捷入口点击事件
   quickEntranceTap(e) {
     const url = e.currentTarget.dataset.url
+    
+    // 检查用户是否已登录，如果未登录则提示需要登录
+    const app = getApp()
+    if (!app.globalData.isLoggedIn) {
+      console.log('用户未登录，快捷入口功能受限')
+      wx.showModal({
+        title: '需要登录',
+        content: '使用此功能需要登录，是否现在登录？',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({
+              url: '/pages/auth/login/login'
+            })
+          }
+        }
+      })
+      return
+    }
+    
     wx.navigateTo({ url })
   },
   

@@ -16,11 +16,81 @@ Page({
     showConfirmPassword: false,
     genderOptions: ['男', '女', '保密'],
     agreementChecked: false,
-    isLoading: false
+    isLoading: false,
+    // 表单验证状态
+    validation: {
+      username: { valid: true, message: '' },
+      phone: { valid: true, message: '' },
+      password: { valid: true, message: '' },
+      confirmPassword: { valid: true, message: '' },
+      age: { valid: true, message: '' }
+    },
+    // 实时验证状态
+    isFormValid: false,
+    // 密码强度
+    passwordStrength: 0, // 0-4
+    passwordStrengthText: '',
+    passwordStrengthColor: ''
   },
 
   onLoad() {
     // 页面加载时的初始化
+  },
+
+  // 检查密码强度
+  checkPasswordStrength(password) {
+    if (!password) return { score: 0, text: '', color: '' };
+    
+    let score = 0;
+    let patterns = {
+      length: password.length >= 8,
+      lowercase: /[a-z]/.test(password),
+      uppercase: /[A-Z]/.test(password),
+      numbers: /\d/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+    
+    // 计算分数
+    Object.values(patterns).forEach(match => {
+      if (match) score++;
+    });
+    
+    // 额外加分
+    if (password.length >= 12) score++;
+    if (patterns.length && patterns.lowercase && patterns.uppercase && patterns.numbers && patterns.special) score++;
+    
+    const strengthLevels = [
+      { score: 0, text: '太短', color: '#ff4757' },
+      { score: 1, text: '弱', color: '#ff4757' },
+      { score: 2, text: '一般', color: '#ffa502' },
+      { score: 3, text: '良好', color: '#2ed573' },
+      { score: 4, text: '强', color: '#26de81' },
+      { score: 5, text: '很强', color: '#20bf6b' }
+    ];
+    
+    return strengthLevels[Math.min(score, 5)];
+  },
+
+  // 检查表单整体有效性
+  checkFormValidity() {
+    const { 
+      selectedRole, username, realName, phone, 
+      password, confirmPassword, genderIndex, age, address,
+      validation
+    } = this.data;
+    
+    const isFormValid = selectedRole && 
+                       username && validation.username.valid &&
+                       realName &&
+                       phone && validation.phone.valid &&
+                       password && validation.password.valid &&
+                       confirmPassword && validation.confirmPassword.valid &&
+                       genderIndex !== -1 &&
+                       age && validation.age.valid &&
+                       address &&
+                       this.data.agreementChecked;
+    
+    this.setData({ isFormValid });
   },
 
   // 角色选择
@@ -29,13 +99,28 @@ Page({
     this.setData({
       selectedRole: role
     });
+    this.checkFormValidity();
   },
 
   // 输入事件处理
   onUsernameInput(e) {
+    const username = e.detail.value.trim();
+    const validation = { ...this.data.validation };
+    
+    if (username.length < 3) {
+      validation.username = { valid: false, message: '用户名至少需要3个字符' };
+    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      validation.username = { valid: false, message: '用户名只能包含字母、数字和下划线' };
+    } else {
+      validation.username = { valid: true, message: '' };
+    }
+    
     this.setData({
-      username: e.detail.value.trim()
+      username: username,
+      validation: validation
     });
+    
+    this.checkFormValidity();
   },
 
   onRealNameInput(e) {
@@ -45,21 +130,74 @@ Page({
   },
 
   onPhoneInput(e) {
+    const phone = e.detail.value.trim();
+    const validation = { ...this.data.validation };
+    
+    if (!/^1[3-9]\d{9}$/.test(phone)) {
+      validation.phone = { valid: false, message: '请输入正确的手机号' };
+    } else {
+      validation.phone = { valid: true, message: '' };
+    }
+    
     this.setData({
-      phone: e.detail.value.trim()
+      phone: phone,
+      validation: validation
     });
+    
+    this.checkFormValidity();
   },
 
   onPasswordInput(e) {
+    const password = e.detail.value;
+    const validation = { ...this.data.validation };
+    
+    // 密码强度检查
+    const strength = this.checkPasswordStrength(password);
+    
+    if (password.length < 6) {
+      validation.password = { valid: false, message: '密码至少需要6个字符' };
+    } else if (!/^(?=.*[a-zA-Z])(?=.*\d).+$/.test(password)) {
+      validation.password = { valid: false, message: '密码必须包含字母和数字' };
+    } else {
+      validation.password = { valid: true, message: '' };
+    }
+    
+    // 检查确认密码
+    if (this.data.confirmPassword) {
+      if (password !== this.data.confirmPassword) {
+        validation.confirmPassword = { valid: false, message: '两次密码输入不一致' };
+      } else {
+        validation.confirmPassword = { valid: true, message: '' };
+      }
+    }
+    
     this.setData({
-      password: e.detail.value
+      password: password,
+      validation: validation,
+      passwordStrength: strength.score,
+      passwordStrengthText: strength.text,
+      passwordStrengthColor: strength.color
     });
+    
+    this.checkFormValidity();
   },
 
   onConfirmPasswordInput(e) {
+    const confirmPassword = e.detail.value;
+    const validation = { ...this.data.validation };
+    
+    if (confirmPassword !== this.data.password) {
+      validation.confirmPassword = { valid: false, message: '两次密码输入不一致' };
+    } else {
+      validation.confirmPassword = { valid: true, message: '' };
+    }
+    
     this.setData({
-      confirmPassword: e.detail.value
+      confirmPassword: confirmPassword,
+      validation: validation
     });
+    
+    this.checkFormValidity();
   },
 
   onGenderChange(e) {
@@ -69,9 +207,21 @@ Page({
   },
 
   onAgeInput(e) {
+    const age = e.detail.value;
+    const validation = { ...this.data.validation };
+    
+    if (!age || age < 1 || age > 120) {
+      validation.age = { valid: false, message: '请输入正确的年龄(1-120)' };
+    } else {
+      validation.age = { valid: true, message: '' };
+    }
+    
     this.setData({
-      age: e.detail.value
+      age: age,
+      validation: validation
     });
+    
+    this.checkFormValidity();
   },
 
   onAddressInput(e) {
@@ -98,6 +248,7 @@ Page({
     this.setData({
       agreementChecked: e.detail.value.length > 0
     });
+    this.checkFormValidity();
   },
 
   showServiceAgreement() {
@@ -116,136 +267,74 @@ Page({
     });
   },
 
-  // 返回登录
-  onLogin() {
-    wx.navigateBack();
-  },
-
-  // 表单验证
-  validateForm() {
+  // 注册提交
+  async onRegister() {
     const { 
       selectedRole, username, realName, phone, 
-      password, confirmPassword, genderIndex, age, address 
+      password, confirmPassword, genderIndex, age, address
     } = this.data;
 
+    // 客户端验证
     if (!selectedRole) {
-      wx.showToast({
-        title: '请选择角色',
-        icon: 'none'
-      });
-      return false;
+      wx.showToast({ title: '请选择角色', icon: 'none' });
+      return;
     }
 
-    if (!username || username.length < 3) {
-      wx.showToast({
-        title: '用户名至少3位',
-        icon: 'none'
-      });
-      return false;
-    }
-
-    if (!realName) {
-      wx.showToast({
-        title: '请输入真实姓名',
-        icon: 'none'
-      });
-      return false;
-    }
-
-    if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
-      wx.showToast({
-        title: '请输入正确的手机号',
-        icon: 'none'
-      });
-      return false;
-    }
-
-    if (!password || password.length < 6) {
-      wx.showToast({
-        title: '密码至少6位',
-        icon: 'none'
-      });
-      return false;
+    if (!username || !realName || !phone || !password || !confirmPassword || !age || !address) {
+      wx.showToast({ title: '请填写完整信息', icon: 'none' });
+      return;
     }
 
     if (password !== confirmPassword) {
-      wx.showToast({
-        title: '两次密码输入不一致',
-        icon: 'none'
-      });
-      return false;
+      wx.showToast({ title: '两次密码输入不一致', icon: 'none' });
+      return;
     }
 
     if (genderIndex === -1) {
-      wx.showToast({
-        title: '请选择性别',
-        icon: 'none'
-      });
-      return false;
-    }
-
-    if (!age || age < 1 || age > 120) {
-      wx.showToast({
-        title: '请输入正确的年龄',
-        icon: 'none'
-      });
-      return false;
-    }
-
-    if (!address) {
-      wx.showToast({
-        title: '请输入地址',
-        icon: 'none'
-      });
-      return false;
-    }
-
-    return true;
-  },
-
-  // 注册提交
-  async onRegister() {
-    if (!this.validateForm()) {
+      wx.showToast({ title: '请选择性别', icon: 'none' });
       return;
     }
 
     if (!this.data.agreementChecked) {
-      wx.showToast({
-        title: '请同意服务协议和隐私政策',
-        icon: 'none'
-      });
+      wx.showToast({ title: '请先同意服务协议', icon: 'none' });
       return;
     }
 
     this.setData({ isLoading: true });
 
     try {
+      // 调用注册API
       const result = await this.registerRequest();
       
       if (result.success) {
+        // 注册成功
         wx.showToast({
           title: '注册成功',
           icon: 'success',
           duration: 1500
         });
-
-        // 注册成功后自动登录
+        
         setTimeout(() => {
-          this.autoLoginAfterRegister();
+          this.setData({ isLoading: false });
+          wx.navigateTo({
+            url: '/pages/auth/login/login'
+          });
         }, 1500);
       } else {
+        // 注册失败
+        const errorMessage = this.getRegisterErrorMessage(result.message);
         wx.showToast({
-          title: result.message || '注册失败',
+          title: errorMessage,
           icon: 'none'
         });
+        this.setData({ isLoading: false });
       }
     } catch (error) {
       console.error('注册错误:', error);
       wx.showToast({
-        title: '网络错误，请稍后重试',
+        title: '网络连接失败，请检查网络后重试',
         icon: 'none'
       });
-    } finally {
       this.setData({ isLoading: false });
     }
   },
@@ -254,7 +343,7 @@ Page({
   registerRequest() {
     const { 
       selectedRole, username, realName, phone, 
-      password, genderIndex, age, address 
+      password, genderIndex, age, address
     } = this.data;
 
     return new Promise((resolve, reject) => {
@@ -262,11 +351,11 @@ Page({
         url: 'http://localhost:3000/api/auth/register',
         method: 'POST',
         data: {
+          role: selectedRole,
           username: username,
-          password: password,
-          phone: phone,
-          roleCode: selectedRole,
           realName: realName,
+          phone: phone,
+          password: password,
           gender: this.data.genderOptions[genderIndex],
           age: parseInt(age),
           address: address
@@ -288,51 +377,19 @@ Page({
     });
   },
 
-  // 注册后自动登录
-  async autoLoginAfterRegister() {
-    const { username, password } = this.data;
+  // 获取注册错误消息
+  getRegisterErrorMessage(message) {
+    if (!message) return '注册失败，请重试';
     
-    try {
-      const result = await new Promise((resolve, reject) => {
-        wx.request({
-          url: 'http://localhost:3000/api/auth/login',
-          method: 'POST',
-          data: {
-            username: username,
-            password: password
-          },
-          header: {
-            'Content-Type': 'application/json'
-          },
-          success: (res) => {
-            if (res.statusCode === 200) {
-              resolve(res.data);
-            } else {
-              reject(new Error('自动登录失败'));
-            }
-          },
-          fail: (error) => {
-            reject(error);
-          }
-        });
-      });
-
-      if (result.success) {
-        // 保存登录状态
-        wx.setStorageSync('token', result.data.token);
-        wx.setStorageSync('userInfo', result.data.userInfo);
-        app.globalData.userInfo = result.data.userInfo;
-        app.globalData.isLoggedIn = true;
-
-        // 跳转到首页
-        wx.switchTab({
-          url: '/pages/index/index'
-        });
-      }
-    } catch (error) {
-      console.error('自动登录失败:', error);
-      // 如果自动登录失败，返回登录页面
-      wx.navigateBack();
-    }
+    const errorMap = {
+      'USERNAME_EXISTS': '用户名已存在',
+      'PHONE_EXISTS': '手机号已被注册',
+      'INVALID_PHONE': '手机号格式不正确',
+      'WEAK_PASSWORD': '密码强度不够',
+      'INVALID_AGE': '年龄格式不正确',
+      'INVALID_ROLE': '角色选择错误'
+    };
+    
+    return errorMap[message] || message || '注册失败，请重试';
   }
 });

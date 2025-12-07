@@ -222,6 +222,63 @@ page::after {
   display: flex;
   flex-direction: column;
   background-color: var(--bg-primary);
+  position: relative;
+}
+
+/* 调试面板样式 */
+.debug-panel {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  z-index: 1000;
+  min-width: 150px;
+}
+
+.debug-title {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.debug-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin: 5px 0;
+  font-size: 12px;
+  width: 100%;
+}
+
+.debug-btn:active {
+  background: #ff5252;
+}
+
+/* 调试触发器 */
+.debug-trigger {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.debug-text {
+  color: white;
+  font-size: 18px;
 }
 
 .swiper-section {

@@ -10,19 +10,20 @@
     <view class="form-item">
       <text class="label">用户名/手机号</text>
       <input 
-        class="input" 
+        class="input {{!validation.username.valid ? 'error' : ''}}" 
         placeholder="请输入用户名或手机号" 
         value="{{username}}"
         bindinput="onUsernameInput"
         maxlength="20"
       />
+      <text class="error-message" wx:if="{{!validation.username.valid}}">{{validation.username.message}}</text>
     </view>
 
     <view class="form-item">
       <text class="label">密码</text>
       <view class="password-input">
         <input 
-          class="input" 
+          class="input {{!validation.password.valid ? 'error' : ''}}" 
           placeholder="请输入密码" 
           password="{{!showPassword}}"
           value="{{password}}"
@@ -35,19 +36,29 @@
           bindtap="togglePassword"
         ></image>
       </view>
+      <text class="error-message" wx:if="{{!validation.password.valid}}">{{validation.password.message}}</text>
+    </view>
+
+    <!-- 登录错误提示 -->
+    <view class="login-error" wx:if="{{loginError}}">
+      <text class="error-text">{{loginError}}</text>
     </view>
 
     <view class="form-options">
-      <checkbox-group bindchange="onRememberChange">
-        <label class="remember-me">
-          <checkbox value="1" checked="{{rememberMe}}"/>
-          <text>记住我</text>
+      <checkbox-group bindchange="onRememberMeChange" class="remember-group">
+        <label class="checkbox-item">
+          <checkbox value="remember" checked="{{rememberMe}}" />
+          <text>记住用户名</text>
+        </label>
+        <label class="checkbox-item">
+          <checkbox value="rememberPassword" checked="{{rememberPassword}}" />
+          <text>记住密码</text>
         </label>
       </checkbox-group>
       <text class="forgot-password" bindtap="onForgotPassword">忘记密码？</text>
     </view>
 
-    <button class="login-btn" bindtap="onLogin" loading="{{isLoading}}">
+    <button class="login-btn" bindtap="onLogin" loading="{{isLoading}}" disabled="{{!username || !password || isLoading}}">
       {{isLoading ? '登录中...' : '登录'}}
     </button>
 

@@ -3,7 +3,36 @@
   "compileType": "miniprogram",
   "libVersion": "3.10.3",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "backend"
+      },
+      {
+        "type": "file",
+        "value": "create_icons.py"
+      },
+      {
+        "type": "file",
+        "value": "database/schema.sql"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": ".eslintrc.js"
+      },
+      {
+        "type": "file",
+        "value": ".gitignore"
+      },
+      {
+        "type": "file",
+        "value": "package-lock.json"
+      }
+    ],
     "include": []
   },
   "setting": {

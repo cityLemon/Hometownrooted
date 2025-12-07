@@ -2,7 +2,7 @@
 
 .auth-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
   padding: 40rpx;
   display: flex;
   flex-direction: column;
@@ -59,17 +59,35 @@
 .input {
   width: 100%;
   height: 88rpx;
-  border: 2rpx solid #e0e0e0;
+  border: 2rpx solid #e1e8ed;
   border-radius: 12rpx;
-  padding: 0 30rpx;
+  padding: 0 80rpx 0 20rpx;
   font-size: 30rpx;
   transition: all 0.3s ease;
+  background-color: #fff;
   box-sizing: border-box;
 }
 
 .input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+  border-color: #ff9a56;
+  box-shadow: 0 0 0 4rpx rgba(255, 154, 86, 0.1);
+  background-color: #fff8f5;
+}
+
+.input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.input.error:focus {
+  box-shadow: 0 0 0 4rpx rgba(255, 71, 87, 0.1);
+}
+
+.error-message {
+  color: #ff4757;
+  font-size: 24rpx;
+  margin-top: 8rpx;
+  display: block;
 }
 
 .password-input {
@@ -90,29 +108,36 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40rpx;
+  font-size: 28rpx;
 }
 
-.remember-me {
+.remember-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.checkbox-item {
   display: flex;
   align-items: center;
   font-size: 26rpx;
   color: #666;
 }
 
-.remember-me checkbox {
-  margin-right: 10rpx;
+.checkbox-item checkbox {
+  margin-right: 8rpx;
+  transform: scale(0.8);
 }
 
 .forgot-password {
+  color: #ff9a56;
   font-size: 26rpx;
-  color: #667eea;
-  cursor: pointer;
 }
 
 .login-btn {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
   color: white;
   border: none;
   border-radius: 12rpx;
@@ -124,7 +149,7 @@
 
 .login-btn:hover {
   transform: translateY(-2rpx);
-  box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10rpx 30rpx rgba(255, 154, 86, 0.3);
 }
 
 .login-btn[loading] {
@@ -139,7 +164,7 @@
 }
 
 .register-link {
-  color: #667eea;
+  color: #ff9a56;
   margin-left: 10rpx;
   cursor: pointer;
 }
@@ -196,7 +221,79 @@
   color: #666;
 }
 
+/* 输入框聚焦时的橙色边框 */
+.input:focus {
+  border-color: #ff9a56;
+  box-shadow: 0 0 0 4rpx rgba(255, 154, 86, 0.1);
+  background-color: #fff8f5;
+}
+
 /* 页面加载动画 */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.page-loader.hidden {
+  display: none;
+}
+
+.loader-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid rgba(255, 255, 255, 0.3);
+  border-top: 6rpx solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+.loader-text {
+  color: white;
+  font-size: 28rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 登录错误提示 */
+.login-error {
+  background: #fff5f5;
+  border: 2rpx solid #ff4757;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+  text-align: center;
+  animation: slideIn 0.3s ease;
+}
+
+.error-text {
+  color: #ff4757;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .page-loader {
   position: fixed;
   top: 0;
@@ -219,7 +316,7 @@
   width: 80rpx;
   height: 80rpx;
   border: 6rpx solid #f3f3f3;
-  border-top: 6rpx solid #667eea;
+  border-top: 6rpx solid #ff9a56;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20rpx;

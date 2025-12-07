@@ -20,8 +20,21 @@
 <!-- 页面容器 -->
 <view class="page-container" wx:if="{{pageLoaded}}">
   
-  <!-- 页面内容 -->
-  <view class="page-content">
+  <!-- 未登录状态 -->
+  <view class="login-prompt" wx:if="{{!isLoggedIn}}">
+    <view class="login-icon">🔒</view>
+    <view class="login-title font-xl font-bold text-primary">请登录</view>
+    <view class="login-desc font-lg text-secondary">登录后可查看个人信息</view>
+    <button 
+      class="btn btn-primary btn-large font-lg font-bold login-btn"
+      bindtap="goToLogin"
+    >
+      立即登录
+    </button>
+  </view>
+  
+  <!-- 已登录状态 -->
+  <view class="page-content" wx:else>
   <!-- 编辑模式按钮 -->
   <view class="edit-mode-buttons" wx:if="{{!editMode}}">
     <button 

@@ -14,6 +14,18 @@
   当前处于离线状态，部分功能可能受限
 </view>
 
+  <!-- 临时调试工具 - 清除登录状态 -->
+  <view class="debug-panel" wx:if="{{showDebugPanel}}">
+    <text class="debug-title">调试工具</text>
+    <button class="debug-btn" bindtap="clearLoginData">清除登录数据</button>
+    <button class="debug-btn" bindtap="hideDebugPanel">隐藏面板</button>
+  </view>
+  
+  <!-- 显示调试面板的触发区域 -->
+  <view wx:if="{{!showDebugPanel}}" class="debug-trigger" bindtap="showDebugPanel">
+    <text class="debug-text">⚙️</text>
+  </view>
+
 <!-- 顶部状态栏占位 -->
 <view class="status-bar-placeholder"></view>
 
@@ -146,9 +158,9 @@
       </view>
       
       <!-- 进入角色按钮 -->
-      <view class="enter-role-btn-container" wx:if="{{selectedRole}}">
-        <button class="enter-role-btn" bindtap="enterRole" animation="{{enterButtonAnimation}}">
-          <text>进入 {{selectedRoleName}}</text>
+      <view class="enter-role-btn-container">
+        <button class="enter-role-btn" bindtap="enterRole" animation="{{enterButtonAnimation}}" disabled="{{!selectedRole}}">
+          <text>{{selectedRole ? '进入 ' + selectedRoleName : '请先选择角色'}}</text>
           <text class="arrow">→</text>
         </button>
       </view>

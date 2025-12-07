@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="title">TabBar测试页面</view>
+  <view class="description">这个页面用于测试底部导航栏是否正常显示</view>
+  <button bindtap="clearStorage">清除本地存储</button>
+  <button bindtap="checkLoginStatus">检查登录状态</button>
+</view>

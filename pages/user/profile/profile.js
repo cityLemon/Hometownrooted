@@ -1,23 +1,24 @@
 // profile.js - 个人信息
+const app = getApp();
+
 Page({
   data: {
     // 页面加载状态
     pageLoaded: false,
     // 离线状态
     offline: false,
+    // 登录状态
+    isLoggedIn: false,
     // 用户信息
     userInfo: {
       avatarUrl: '/images/avatar/default.svg',
-      name: '张三',
-      phone: '13800138000',
-      gender: '男',
-      age: 75,
-      address: '北京市朝阳区乡村安土社区',
-      role: 'elder', // elder, volunteer, admin, government, csr
-      familyMembers: [
-        { id: 1, name: '儿子', phone: '13800138001', relation: '子女' },
-        { id: 2, name: '女儿', phone: '13800138002', relation: '子女' }
-      ]
+      name: '',
+      phone: '',
+      gender: '',
+      age: '',
+      address: '',
+      role: '',
+      familyMembers: []
     },
     // 编辑模式
     editMode: false,
@@ -27,31 +28,103 @@ Page({
 
   onLoad() {
     console.log('User profile page loaded')
-    // 从数据库获取用户信息
-    this.loadUserInfo()
+    // 检查登录状态
+    this.checkLoginStatus()
     
-    // 页面加载完成
-    this.setData({
-      pageLoaded: true
-    })
-
     // 设置网络状态监听
     this.setupNetworkListener()
+  },
+
+  onShow() {
+    // 页面显示时重新检查登录状态
+    this.checkLoginStatus()
   },
 
   onReady() {
     console.log('User profile page ready')
   },
 
+  // 检查登录状态
+  checkLoginStatus() {
+    const app = getApp()
+    const isLoggedIn = app.globalData.isLoggedIn || false
+    
+    this.setData({
+      isLoggedIn: isLoggedIn,
+      pageLoaded: true
+    })
+
+    if (isLoggedIn) {
+      // 已登录，加载用户信息
+      this.loadUserInfo()
+    } else {
+      // 未登录，显示空数据
+      this.setData({
+        userInfo: {
+          avatarUrl: '/images/avatar/default.svg',
+          name: '',
+          phone: '',
+          gender: '',
+          age: '',
+          address: '',
+          role: '',
+          familyMembers: []
+        }
+      })
+    }
+  },
+
+  // 跳转到登录页面
+  goToLogin() {
+    wx.navigateTo({
+      url: '/pages/auth/login/login'
+    })
+  },
+
   // 加载用户信息
   loadUserInfo() {
-    // 模拟从数据库获取数据
-    // 实际项目中应该调用API获取数据
-    const userInfo = this.data.userInfo
-    this.setData({
-      userInfo,
-      tempUserInfo: JSON.parse(JSON.stringify(userInfo))
-    })
+    // 从全局数据获取用户信息
+    const app = getApp()
+    const globalUserInfo = app.globalData.userInfo
+    
+    if (globalUserInfo) {
+      // 使用全局用户信息
+      const userInfo = {
+        avatarUrl: globalUserInfo.avatarUrl || '/images/avatar/default.svg',
+        name: globalUserInfo.realName || globalUserInfo.username || '',
+        phone: globalUserInfo.phone || '',
+        gender: globalUserInfo.gender || '',
+        age: globalUserInfo.age || '',
+        address: globalUserInfo.address || '',
+        role: globalUserInfo.role || '',
+        familyMembers: globalUserInfo.familyMembers || []
+      }
+      
+      this.setData({
+        userInfo,
+        tempUserInfo: JSON.parse(JSON.stringify(userInfo))
+      })
+    } else {
+      // 如果全局没有用户信息，尝试从本地存储获取
+      const storedUserInfo = wx.getStorageSync('userInfo')
+      if (storedUserInfo) {
+        const userInfo = {
+          avatarUrl: storedUserInfo.avatarUrl || '/images/avatar/default.svg',
+          name: storedUserInfo.realName || storedUserInfo.username || '',
+          phone: storedUserInfo.phone || '',
+          gender: storedUserInfo.gender || '',
+          age: storedUserInfo.age || '',
+          address: storedUserInfo.address || '',
+          role: storedUserInfo.role || '',
+          familyMembers: storedUserInfo.familyMembers || []
+        }
+        
+        this.setData({
+          userInfo,
+          tempUserInfo: JSON.parse(JSON.stringify(userInfo))
+        })
+      }
+    }
   },
 
   // 进入编辑模式
@@ -158,13 +231,44 @@ Page({
       success: (res) => {
         if (res.confirm) {
           // 执行退出登录操作
-          // 实际项目中应该调用API执行退出登录
+          // 清除本地存储的用户信息
+          wx.removeStorageSync('userInfo')
+          wx.removeStorageSync('token')
+          
+          // 清除全局数据
+          const app = getApp()
+          app.globalData.userInfo = null
+          app.globalData.isLoggedIn = false
+          app.globalData.token = ''
+          
+          // 显示退出成功提示
           wx.showToast({
             title: '已退出登录',
-            icon: 'success'
+            icon: 'success',
+            duration: 1500
           })
+          
+          // 重置页面数据
+          this.setData({
+            isLoggedIn: false,
+            userInfo: {
+              avatarUrl: '/images/avatar/default.svg',
+              name: '',
+              phone: '',
+              gender: '',
+              age: '',
+              address: '',
+              role: '',
+              familyMembers: []
+            }
+          })
+          
           // 跳转到登录页面
-          // wx.redirectTo({ url: '/pages/login/login' })
+          setTimeout(() => {
+            wx.reLaunch({
+              url: '/pages/auth/login/login'
+            })
+          }, 1500)
         }
       }
     })

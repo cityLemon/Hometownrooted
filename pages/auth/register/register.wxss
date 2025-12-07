@@ -2,7 +2,7 @@
 
 .auth-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
   padding: 40rpx;
   display: flex;
   flex-direction: column;
@@ -78,9 +78,42 @@
   box-sizing: border-box;
 }
 
-.input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+.input.error {
+  border-color: #ff4757;
+  background-color: #fff5f5;
+}
+
+.error-message {
+  color: #ff4757;
+  font-size: 24rpx;
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* 密码强度指示器 */
+.password-strength {
+  margin-top: 16rpx;
+  padding-left: 20rpx;
+}
+
+.strength-bar {
+  width: 100%;
+  height: 8rpx;
+  background-color: #f1f2f6;
+  border-radius: 4rpx;
+  overflow: hidden;
+  margin-bottom: 8rpx;
+}
+
+.strength-fill {
+  height: 100%;
+  border-radius: 4rpx;
+  transition: width 0.3s ease;
+}
+
+.strength-text {
+  font-size: 24rpx;
+  font-weight: 500;
 }
 
 .password-input {
@@ -119,8 +152,8 @@
 }
 
 .role-item.selected {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+  border-color: #ff9a56;
   color: white;
 }
 
@@ -178,7 +211,7 @@
 }
 
 .agreement-link {
-  color: #667eea;
+  color: #ff9a56;
   margin: 0 5rpx;
 }
 
@@ -186,7 +219,7 @@
 .register-btn {
   width: 100%;
   height: 88rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
   color: white;
   border: none;
   border-radius: 12rpx;
@@ -198,11 +231,17 @@
 
 .register-btn:hover {
   transform: translateY(-2rpx);
-  box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10rpx 30rpx rgba(255, 154, 86, 0.3);
 }
 
 .register-btn[disabled] {
   opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.register-btn:disabled {
+  background: #ccc;
+  transform: none;
   cursor: not-allowed;
 }
 
@@ -213,9 +252,22 @@
 }
 
 .login-link {
-  color: #667eea;
+  color: #ff9a56;
   margin-left: 10rpx;
   cursor: pointer;
+}
+
+/* 输入框聚焦时的橙色边框 */
+.input:focus {
+  border-color: #ff9a56;
+  box-shadow: 0 0 0 4rpx rgba(255, 154, 86, 0.1);
+  background-color: #fff8f5;
+}
+
+/* 选择器聚焦样式 */
+.picker-content:focus {
+  border-color: #ff9a56;
+  box-shadow: 0 0 0 4rpx rgba(255, 154, 86, 0.1);
 }
 
 /* 表单行 */
@@ -248,7 +300,7 @@
   width: 80rpx;
   height: 80rpx;
   border: 6rpx solid #f3f3f3;
-  border-top: 6rpx solid #667eea;
+  border-top: 6rpx solid #ff9a56;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20rpx;
