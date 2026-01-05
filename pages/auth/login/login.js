@@ -254,8 +254,11 @@ Page({
   // 登录请求
   loginRequest(username, password) {
     return new Promise((resolve, reject) => {
+      const url = app.globalData.baseUrl + '/api/auth/login'
+      console.log('登录请求URL:', url)
+      
       wx.request({
-        url: 'http://localhost:8080/api/auth/login',
+        url: url,
         method: 'POST',
         data: {
           username: username,

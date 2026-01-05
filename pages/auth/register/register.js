@@ -347,8 +347,11 @@ Page({
     } = this.data;
 
     return new Promise((resolve, reject) => {
+      const url = app.globalData.baseUrl + '/api/auth/register'
+      console.log('注册请求URL:', url)
+      
       wx.request({
-        url: 'http://localhost:8080/api/auth/register',
+        url: url,
         method: 'POST',
         data: {
           role: selectedRole,

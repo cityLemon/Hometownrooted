@@ -4,11 +4,20 @@ App({
     userInfo: null,
     token: null,
     isLoggedIn: false,
-    currentRole: null
+    currentRole: null,
+    baseUrl: 'http://localhost:8080/hometownrooted_backend_war_exploded'
   },
 
   onLaunch() {
-    console.log('App launched')
+    console.log('========================================')
+    console.log('🚀 App launched')
+    console.log('========================================')
+    
+    // 检查后端连接状态
+    this.checkBackendConnection()
+    
+    // 检查数据库连接状态（通过后端API）
+    this.checkDatabaseConnection()
     
     // Check for compatibility issues
     if (!wx.getMenuButtonBoundingClientRect) {
@@ -50,6 +59,103 @@ App({
       console.error('检查登录状态失败:', error)
       this.clearLoginData()
     }
+  },
+
+  // 检查后端连接状态
+  checkBackendConnection() {
+    console.log('\n📡 检查后端连接状态...')
+    const that = this
+    const url = this.globalData.baseUrl + '/api/health'
+    
+    console.log('请求URL:', url)
+    
+    wx.request({
+      url: url,
+      method: 'GET',
+      timeout: 5000,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          console.log('✅ 后端连接成功')
+          console.log('   后端地址:', this.globalData.baseUrl)
+          console.log('   响应状态:', res.statusCode)
+          
+          // 显示连接成功提示
+          wx.showToast({
+            title: '后端连接成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          console.log('❌ 后端连接失败')
+          console.log('   状态码:', res.statusCode)
+          
+          wx.showToast({
+            title: '后端连接失败',
+            icon: 'error',
+            duration: 3000
+          })
+        }
+      },
+      fail: (error) => {
+        console.log('❌ 后端连接失败')
+        console.log('   错误信息:', error.errMsg)
+        
+        wx.showToast({
+          title: '无法连接后端',
+          icon: 'error',
+          duration: 3000
+        })
+      }
+    })
+  },
+
+  // 检查数据库连接状态
+  checkDatabaseConnection() {
+    console.log('\n💾 检查数据库连接状态...')
+    const that = this
+    const url = this.globalData.baseUrl + '/api/database/status'
+    
+    console.log('请求URL:', url)
+    
+    wx.request({
+      url: url,
+      method: 'GET',
+      timeout: 5000,
+      success: (res) => {
+        if (res.statusCode === 200 && res.data.success) {
+          console.log('✅ 数据库连接成功')
+          console.log('   数据库类型:', res.data.databaseType || 'MySQL')
+          console.log('   数据库名称:', res.data.databaseName || 'hometownrooted')
+          console.log('   连接状态:', res.data.status || '正常')
+          
+          wx.showToast({
+            title: '数据库连接成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          console.log('❌ 数据库连接失败')
+          console.log('   响应数据:', res.data)
+          
+          wx.showToast({
+            title: '数据库连接失败',
+            icon: 'error',
+            duration: 3000
+          })
+        }
+      },
+      fail: (error) => {
+        console.log('❌ 数据库连接失败')
+        console.log('   错误信息:', error.errMsg)
+        console.log('   提示: 请确保后端服务已启动且数据库配置正确')
+        
+        wx.showToast({
+          title: '无法连接数据库',
+          icon: 'error',
+          duration: 3000
+        })
+      }
+    })
   },
 
   // 验证token

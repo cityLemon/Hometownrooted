@@ -5,6 +5,15 @@ Page({
     offline: false,
     // 双击检测时间戳
     lastTapTime: 0,
+    // 调试信息
+    debugInfo: {
+      backendConnected: false,
+      backendUrl: 'http://localhost:8080/hometownrooted_backend_war_exploded',
+      databaseConnected: false,
+      databaseName: 'hometownrooted',
+      databaseType: 'MySQL',
+      showDebug: true
+    },
     // 角色选项
     roles: [
       {
@@ -105,13 +114,19 @@ Page({
   },
   
   onLoad() {
-    console.log('Index page loaded')
+    console.log('========================================')
+    console.log('📱 Index page loaded')
+    console.log('========================================')
     
     // 强制显示tabBar
     this.forceShowTabBar()
     
     // 检查登录状态
     this.checkLoginStatus()
+    
+    // 检查后端和数据库连接状态
+    this.checkConnections()
+    
     // 监听网络状态变化
     this.setupNetworkListener()
   },
@@ -198,6 +213,8 @@ Page({
   checkLoginStatus() {
     const app = getApp()
     
+    console.log('\n🔐 检查登录状态...')
+    
     // 临时注释掉自动重定向，让用户可以看到index页面的tabBar
     // 如果用户已登录，隐藏首页，跳转到对应角色页面
     // if (app.globalData.isLoggedIn && app.globalData.userInfo) {
@@ -214,6 +231,160 @@ Page({
       console.log('用户信息:', app.globalData.userInfo)
       console.log('注意: 已临时禁用自动重定向，如需恢复请取消注释')
     }
+  },
+
+  // 检查后端和数据库连接状态
+  checkConnections() {
+    console.log('\n🔍 开始检查连接状态...')
+    
+    // 检查后端连接
+    this.checkBackendConnection()
+    
+    // 检查数据库连接
+    this.checkDatabaseConnection()
+  },
+
+  // 检查后端连接状态
+  checkBackendConnection() {
+    console.log('\n📡 检查后端连接状态...')
+    const that = this
+    const url = this.data.debugInfo.backendUrl + '/api/health'
+    
+    console.log('请求URL:', url)
+    
+    wx.request({
+      url: url,
+      method: 'GET',
+      timeout: 5000,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          console.log('✅ 后端连接成功')
+          console.log('   后端地址:', that.data.debugInfo.backendUrl)
+          console.log('   响应状态:', res.statusCode)
+          
+          that.setData({
+            'debugInfo.backendConnected': true
+          })
+          
+          wx.showToast({
+            title: '后端连接成功',
+            icon: 'success',
+            duration: 1500
+          })
+        } else {
+          console.log('❌ 后端连接失败')
+          console.log('   状态码:', res.statusCode)
+          
+          that.setData({
+            'debugInfo.backendConnected': false
+          })
+          
+          wx.showToast({
+            title: '后端连接失败',
+            icon: 'error',
+            duration: 2000
+          })
+        }
+      },
+      fail: (error) => {
+        console.log('❌ 后端连接失败')
+        console.log('   错误信息:', error.errMsg)
+        
+        that.setData({
+          'debugInfo.backendConnected': false
+        })
+        
+        wx.showToast({
+          title: '无法连接后端',
+          icon: 'error',
+          duration: 2000
+        })
+      }
+    })
+  },
+
+  // 检查数据库连接状态
+  checkDatabaseConnection() {
+    console.log('\n💾 检查数据库连接状态...')
+    const that = this
+    const url = this.data.debugInfo.backendUrl + '/api/database/status'
+    
+    console.log('请求URL:', url)
+    
+    wx.request({
+      url: url,
+      method: 'GET',
+      timeout: 5000,
+      success: (res) => {
+        if (res.statusCode === 200 && res.data.success) {
+          console.log('✅ 数据库连接成功')
+          console.log('   数据库类型:', res.data.databaseType || 'MySQL')
+          console.log('   数据库名称:', res.data.databaseName || 'hometownrooted')
+          console.log('   连接状态:', res.data.status || '正常')
+          
+          that.setData({
+            'debugInfo.databaseConnected': true,
+            'debugInfo.databaseType': res.data.databaseType || 'MySQL',
+            'debugInfo.databaseName': res.data.databaseName || 'hometownrooted'
+          })
+          
+          wx.showToast({
+            title: '数据库连接成功',
+            icon: 'success',
+            duration: 1500
+          })
+        } else {
+          console.log('❌ 数据库连接失败')
+          console.log('   响应数据:', res.data)
+          
+          that.setData({
+            'debugInfo.databaseConnected': false
+          })
+          
+          wx.showToast({
+            title: '数据库连接失败',
+            icon: 'error',
+            duration: 2000
+          })
+        }
+      },
+      fail: (error) => {
+        console.log('❌ 数据库连接失败')
+        console.log('   错误信息:', error.errMsg)
+        console.log('   提示: 请确保后端服务已启动且数据库配置正确')
+        
+        that.setData({
+          'debugInfo.databaseConnected': false
+        })
+        
+        wx.showToast({
+          title: '无法连接数据库',
+          icon: 'error',
+          duration: 2000
+        })
+      }
+    })
+  },
+
+  // 切换调试信息显示
+  toggleDebugInfo() {
+    this.setData({
+      'debugInfo.showDebug': !this.data.debugInfo.showDebug
+    })
+  },
+
+  // 重新检查连接
+  recheckConnections() {
+    wx.showLoading({
+      title: '检查中...',
+      mask: true
+    })
+    
+    this.checkConnections()
+    
+    setTimeout(() => {
+      wx.hideLoading()
+    }, 3000)
   },
 
   // 强制显示tabBar

@@ -39,6 +39,24 @@
         <url-pattern>/api/timebank/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>HealthServlet</servlet-name>
+        <servlet-class>com.hometownrooted.servlet.HealthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HealthServlet</servlet-name>
+        <url-pattern>/api/health</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DatabaseStatusServlet</servlet-name>
+        <servlet-class>com.hometownrooted.servlet.DatabaseStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DatabaseStatusServlet</servlet-name>
+        <url-pattern>/api/database/status</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>CORSFilter</filter-name>
         <filter-class>com.hometownrooted.servlet.CORSFilter</filter-class>

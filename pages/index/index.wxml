@@ -9,6 +9,58 @@
   <text class="loader-text">加载中...</text>
 </view>
 
+<!-- 调试信息面板 -->
+<view class="debug-panel {{debugInfo.showDebug ? '' : 'hidden'}}" wx:if="{{debugInfo.showDebug}}">
+  <view class="debug-header">
+    <text class="debug-title">🔧 调试信息</text>
+    <view class="debug-close" bindtap="toggleDebugInfo">✕</view>
+  </view>
+  
+  <view class="debug-content">
+    <!-- 后端连接状态 -->
+    <view class="debug-item">
+      <view class="debug-label">
+        <text>📡 后端连接</text>
+      </view>
+      <view class="debug-status {{debugInfo.backendConnected ? 'success' : 'error'}}">
+        <text>{{debugInfo.backendConnected ? '✅ 已连接' : '❌ 未连接'}}</text>
+      </view>
+      <view class="debug-detail" wx:if="{{debugInfo.backendConnected}}">
+        <text>地址: {{debugInfo.backendUrl}}</text>
+      </view>
+    </view>
+    
+    <!-- 数据库连接状态 -->
+    <view class="debug-item">
+      <view class="debug-label">
+        <text>💾 数据库连接</text>
+      </view>
+      <view class="debug-status {{debugInfo.databaseConnected ? 'success' : 'error'}}">
+        <text>{{debugInfo.databaseConnected ? '✅ 已连接' : '❌ 未连接'}}</text>
+      </view>
+      <view class="debug-detail" wx:if="{{debugInfo.databaseConnected}}">
+        <text>类型: {{debugInfo.databaseType}}</text>
+        <text>名称: {{debugInfo.databaseName}}</text>
+      </view>
+    </view>
+    
+    <!-- 重新检查按钮 -->
+    <view class="debug-actions">
+      <button class="debug-btn" bindtap="recheckConnections" size="mini">
+        🔄 重新检查
+      </button>
+      <button class="debug-btn" bindtap="toggleDebugInfo" size="mini">
+        👁️ 隐藏面板
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 调试按钮（当面板隐藏时显示） -->
+<view class="debug-toggle-btn" wx:if="{{!debugInfo.showDebug}}" bindtap="toggleDebugInfo">
+  <text>🔧</text>
+</view>
+
 <!-- 离线状态提示 -->
 <view class="offline-tip" wx:if="{{offline}}">
   当前处于离线状态，部分功能可能受限

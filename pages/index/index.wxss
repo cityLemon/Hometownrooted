@@ -1044,7 +1044,7 @@ page::after {
 /* 离线状态提示 */
 .offline-tip {
   position: fixed;
-  top: 88rpx; /* 适配状态栏 */
+  top: 88rpx;
   left: 0;
   right: 0;
   background-color: var(--warning-color);
@@ -1053,6 +1053,163 @@ page::after {
   padding: var(--spacing-sm);
   font-size: var(--font-size-sm);
   z-index: 1000;
+}
+
+/* -------------------
+  调试面板样式
+-------------------- */
+.debug-panel {
+  position: fixed;
+  top: 88rpx;
+  right: var(--spacing-md);
+  width: 320rpx;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  z-index: 9999;
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+  border: 2rpx solid var(--border-color);
+}
+
+.debug-panel.hidden {
+  display: none;
+}
+
+.debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: white;
+}
+
+.debug-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.debug-close {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background-color: rgba(255, 255, 255, 0.2);
+  font-size: 24rpx;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.debug-close:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.debug-content {
+  padding: var(--spacing-md);
+}
+
+.debug-item {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2rpx solid var(--border-color);
+}
+
+.debug-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.debug-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.debug-status {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.debug-status.success {
+  background-color: rgba(45, 206, 137, 0.1);
+  color: var(--success-color);
+  border: 2rpx solid rgba(45, 206, 137, 0.2);
+}
+
+.debug-status.error {
+  background-color: rgba(245, 54, 92, 0.1);
+  color: var(--accent-color);
+  border: 2rpx solid rgba(245, 54, 92, 0.2);
+}
+
+.debug-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  padding-left: var(--spacing-md);
+}
+
+.debug-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.debug-btn {
+  flex: 1;
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  border: 2rpx solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: var(--transition-fast);
+}
+
+.debug-btn:hover {
+  background-color: var(--primary-lightest);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.debug-btn:active {
+  transform: scale(0.95);
+}
+
+.debug-toggle-btn {
+  position: fixed;
+  top: 88rpx;
+  right: var(--spacing-md);
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-color);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  transition: var(--transition-base);
+  font-size: 32rpx;
+  cursor: pointer;
+}
+
+.debug-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-xl);
+}
+
+.debug-toggle-btn:active {
+  transform: scale(0.95);
 }
 
 /* 淡入淡出动画 */
