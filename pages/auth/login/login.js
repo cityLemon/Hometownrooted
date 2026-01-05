@@ -255,7 +255,7 @@ Page({
   loginRequest(username, password) {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'http://localhost:3000/api/auth/login',
+        url: 'http://localhost:8080/api/auth/login',
         method: 'POST',
         data: {
           username: username,

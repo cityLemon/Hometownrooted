@@ -55,7 +55,7 @@ App({
   // 验证token
   validateToken(token) {
     wx.request({
-      url: 'http://localhost:3000/api/auth/validate',
+      url: 'http://localhost:8080/api/auth/validate',
       method: 'POST',
       header: {
         'Authorization': `Bearer ${token}`,
@@ -71,7 +71,6 @@ App({
       },
       fail: (error) => {
         console.error('Token验证请求失败:', error)
-        this.clearLoginData()
       }
     })
   },

@@ -101,8 +101,6 @@ Page({
         animation: ''
       }
     ],
-    showDebugPanel: false,  // 调试面板显示状态
-    enterButtonAnimation: '',  // 进入按钮动画
     pageLoaded: false  // 页面加载状态
   },
   
@@ -216,20 +214,6 @@ Page({
       console.log('用户信息:', app.globalData.userInfo)
       console.log('注意: 已临时禁用自动重定向，如需恢复请取消注释')
     }
-  },
-
-  // 显示调试面板
-  showDebugPanel() {
-    this.setData({
-      showDebugPanel: true
-    })
-  },
-
-  // 隐藏调试面板
-  hideDebugPanel() {
-    this.setData({
-      showDebugPanel: false
-    })
   },
 
   // 强制显示tabBar

@@ -348,7 +348,7 @@ Page({
 
     return new Promise((resolve, reject) => {
       wx.request({
-        url: 'http://localhost:3000/api/auth/register',
+        url: 'http://localhost:8080/api/auth/register',
         method: 'POST',
         data: {
           role: selectedRole,

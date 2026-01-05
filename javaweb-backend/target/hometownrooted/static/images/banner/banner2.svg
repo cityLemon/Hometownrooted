@@ -1,0 +1,10 @@
+<svg width="750" height="300" viewBox="0 0 750 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="750" height="300" fill="#64B5F6"/>
+  <path d="M0 220L750 180V300H0V220Z" fill="#2196F3"/>
+  <circle cx="650" cy="150" r="50" fill="#1565C0"/>
+  <circle cx="570" cy="120" r="30" fill="#1565C0"/>
+  <circle cx="710" cy="120" r="30" fill="#1565C0"/>
+  <rect x="50" y="100" width="150" height="80" rx="10" fill="white" opacity="0.9"/>
+  <text x="125" y="150" text-anchor="middle" fill="#1565C0" font-size="24" font-weight="bold">便民服务</text>
+  <text x="125" y="175" text-anchor="middle" fill="#2196F3" font-size="16">缴费预约，一键搞定</text>
+</svg>

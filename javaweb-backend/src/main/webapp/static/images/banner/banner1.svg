@@ -1,0 +1,10 @@
+<svg width="750" height="300" viewBox="0 0 750 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="750" height="300" fill="#81C784"/>
+  <path d="M0 200L750 250V300H0V200Z" fill="#4CAF50"/>
+  <circle cx="100" cy="150" r="50" fill="#2E7D32"/>
+  <circle cx="180" cy="120" r="30" fill="#2E7D32"/>
+  <circle cx="60" cy="120" r="30" fill="#2E7D32"/>
+  <rect x="500" y="100" width="150" height="80" rx="10" fill="white" opacity="0.9"/>
+  <text x="575" y="150" text-anchor="middle" fill="#2E7D32" font-size="24" font-weight="bold">乡村安土</text>
+  <text x="575" y="175" text-anchor="middle" fill="#4CAF50" font-size="16">守护乡村，温暖家园</text>
+</svg>
