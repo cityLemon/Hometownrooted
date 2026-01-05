@@ -142,10 +142,10 @@ Page({
             pageLoaded: true
           })
         } else {
-          console.error('加载服务列表失败:', res.data)
           wx.showToast({
-            title: res.data.message || '加载失败',
-            icon: 'none'
+            title: '使用演示数据',
+            icon: 'none',
+            duration: 1500
           })
           this.setData({
             pageLoaded: true
@@ -154,11 +154,11 @@ Page({
       },
       fail: (error) => {
         wx.hideLoading()
-        console.error('加载服务列表请求失败:', error)
         if (!auth.handleAuthError(error)) {
           wx.showToast({
-            title: '网络错误，请重试',
-            icon: 'none'
+            title: '使用演示数据',
+            icon: 'none',
+            duration: 1500
           })
         }
         this.setData({
@@ -183,12 +183,21 @@ Page({
             myBookings: bookings
           })
         } else {
-          console.error('加载预约记录失败:', res.data)
+          wx.showToast({
+            title: '使用演示数据',
+            icon: 'none',
+            duration: 1500
+          })
         }
       },
       fail: (error) => {
-        console.error('加载预约记录请求失败:', error)
-        auth.handleAuthError(error)
+        if (!auth.handleAuthError(error)) {
+          wx.showToast({
+            title: '使用演示数据',
+            icon: 'none',
+            duration: 1500
+          })
+        }
       }
     })
   },

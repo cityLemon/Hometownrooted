@@ -164,7 +164,7 @@ App({
   // 验证token
   validateToken(token) {
     wx.request({
-      url: 'http://localhost:8080/api/auth/validate',
+      url: this.globalData.baseUrl + '/api/auth/validate',
       method: 'POST',
       header: {
         'Authorization': `Bearer ${token}`,

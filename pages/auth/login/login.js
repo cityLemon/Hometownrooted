@@ -267,15 +267,65 @@ Page({
       avatarPath = '/images/roles/admin.svg';
     }
     
-    const mockData = {
-      token: 'mock_token_' + Date.now(),
-      userInfo: {
+    // 根据角色生成完整的用户信息
+    const userInfoMap = {
+      elder: {
         id: 1,
         username: option.username,
-        role: option.roleText,
-        nickname: option.roleText + '用户',
-        avatar: avatarPath
+        role: '老人',
+        roleText: '老人',
+        realName: '张三',
+        nickname: '张三',
+        avatar: avatarPath,
+        phone: '13800138000',
+        gender: '男',
+        age: 75,
+        address: '北京市朝阳区乡村安土社区',
+        familyMembers: [
+          { name: '李四', relation: '配偶', phone: '13900139000' },
+          { name: '王五', relation: '子女', phone: '13700137000' }
+        ]
+      },
+      volunteer: {
+        id: 2,
+        username: option.username,
+        role: '志愿者',
+        roleText: '志愿者',
+        realName: '李明',
+        nickname: '李明',
+        avatar: avatarPath,
+        phone: '13900139000',
+        gender: '男',
+        age: 35,
+        address: '北京市朝阳区乡村安土社区',
+        familyMembers: [
+          { name: '赵六', relation: '配偶', phone: '13600136000' }
+        ]
+      },
+      admin: {
+        id: 3,
+        username: option.username,
+        role: '管理员',
+        roleText: '管理员',
+        realName: '王强',
+        nickname: '王强',
+        avatar: avatarPath,
+        phone: '13700137000',
+        gender: '男',
+        age: 40,
+        address: '北京市朝阳区乡村安土社区',
+        familyMembers: [
+          { name: '孙七', relation: '配偶', phone: '13500135000' },
+          { name: '周八', relation: '子女', phone: '13400134000' }
+        ]
       }
+    };
+    
+    const userInfo = userInfoMap[option.role] || userInfoMap.elder;
+    
+    const mockData = {
+      token: 'mock_token_' + Date.now(),
+      userInfo: userInfo
     };
     
     console.log('模拟登录数据:', mockData);

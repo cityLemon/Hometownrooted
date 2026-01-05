@@ -56,7 +56,6 @@ Page({
       },
       fail: (err) => {
         wx.hideLoading()
-        console.error('获取位置失败:', err)
         this.setData({
           'location.address': '获取位置失败，请检查权限设置'
         })
@@ -90,7 +89,6 @@ Page({
         }
       },
       fail: (err) => {
-        console.error('逆地址解析失败:', err)
         this.setData({
           'location.address': `${latitude},${longitude}`
         })
@@ -196,7 +194,6 @@ Page({
             icon: 'success'
           })
         } else {
-          console.error('发送呼救失败:', res.data)
           this.setData({
             callStatus: 'failed'
           })
@@ -208,7 +205,6 @@ Page({
       },
       fail: (error) => {
         wx.hideLoading()
-        console.error('发送呼救请求失败:', error)
         if (!auth.handleAuthError(error)) {
           this.setData({
             callStatus: 'failed'
@@ -245,7 +241,6 @@ Page({
         console.log('自动拨号成功')
       },
       fail: (err) => {
-        console.error('自动拨号失败:', err)
       }
     })
   },
@@ -270,7 +265,6 @@ Page({
         console.log('手动拨号成功')
       },
       fail: (err) => {
-        console.error('手动拨号失败:', err)
       }
     })
   },

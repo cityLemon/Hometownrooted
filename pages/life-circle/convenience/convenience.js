@@ -1,4 +1,5 @@
 const auth = require('../../../utils/auth.js')
+const app = getApp()
 
 Page({
   data: {
@@ -69,7 +70,7 @@ Page({
       }
 
       wx.request({
-        url: 'https://your-api.com/api/services',
+        url: app.globalData.baseUrl + '/api/services',
         method: 'GET',
         data: params,
         header: {
@@ -88,21 +89,26 @@ Page({
             })
             resolve(newServices)
           } else {
-            console.error('Load services failed:', res.data)
-            wx.showToast({
-              title: res.data.message || '加载服务列表失败',
-              icon: 'none',
-              duration: 2000
+            // API返回错误，使用mock数据
+            const mockServices = this.getMockServices()
+            this.setData({
+              services: mockServices,
+              filteredServices: mockServices,
+              hasMore: false
             })
-            reject(res.data)
+            wx.showToast({
+              title: '使用演示数据',
+              icon: 'none',
+              duration: 1500
+            })
+            resolve(mockServices)
           }
         },
         fail: (err) => {
-          console.error('Load services error:', err)
           wx.showToast({
-            title: '网络错误，请检查网络连接',
+            title: '使用演示数据',
             icon: 'none',
-            duration: 2000
+            duration: 1500
           })
           
           this.setData({
@@ -122,42 +128,42 @@ Page({
         id: 1,
         name: '水电费缴纳',
         description: '便捷的水电费在线缴纳服务',
-        icon: '/images/payment-icon.png',
+        icon: '/images/roles/elder.svg',
         type: 'payment'
       },
       {
         id: 2,
         name: '快递代收',
         description: '专业快递代收代发服务',
-        icon: '/images/express-icon.png',
+        icon: '/images/roles/volunteer.svg',
         type: 'express'
       },
       {
         id: 3,
         name: '农产品配送',
         description: '新鲜农产品直配到家',
-        icon: '/images/agriculture-icon.png',
+        icon: '/images/roles/elder.svg',
         type: 'agriculture'
       },
       {
         id: 4,
         name: '家政服务',
         description: '专业的家政清洁服务',
-        icon: '/images/housekeeping-icon.png',
+        icon: '/images/roles/volunteer.svg',
         type: 'housekeeping'
       },
       {
         id: 5,
         name: '家电维修',
         description: '快速上门维修服务',
-        icon: '/images/maintenance-icon.png',
+        icon: '/images/roles/admin.svg',
         type: 'maintenance'
       },
       {
         id: 6,
         name: '法律咨询',
         description: '专业的法律咨询服务',
-        icon: '/images/legal-icon.png',
+        icon: '/images/roles/elder.svg',
         type: 'legal'
       }
     ]
@@ -168,7 +174,7 @@ Page({
       const { currentPage, pageSize } = this.data
       
       wx.request({
-        url: 'https://your-api.com/api/bookings',
+        url: app.globalData.baseUrl + '/api/bookings',
         method: 'GET',
         data: {
           page: currentPage,
@@ -185,21 +191,24 @@ Page({
             })
             resolve(records)
           } else {
-            console.error('Load booking records failed:', res.data)
-            wx.showToast({
-              title: res.data.message || '加载预约记录失败',
-              icon: 'none',
-              duration: 2000
+            // API返回错误，使用mock数据
+            const mockRecords = this.getMockBookingRecords()
+            this.setData({
+              bookingRecords: mockRecords
             })
-            reject(res.data)
+            wx.showToast({
+              title: '使用演示数据',
+              icon: 'none',
+              duration: 1500
+            })
+            resolve(mockRecords)
           }
         },
         fail: (err) => {
-          console.error('Load booking records error:', err)
           wx.showToast({
-            title: '网络错误，请检查网络连接',
+            title: '使用演示数据',
             icon: 'none',
-            duration: 2000
+            duration: 1500
           })
           
           this.setData({
@@ -358,7 +367,7 @@ Page({
     })
 
     wx.request({
-      url: 'https://your-api.com/api/bookings',
+      url: app.globalData.baseUrl + '/api/bookings',
       method: 'POST',
       data: {
         serviceId: this.data.selectedService.id,
@@ -388,7 +397,6 @@ Page({
       },
       fail: (err) => {
         wx.hideLoading()
-        console.error('Booking error:', err)
         wx.showToast({
           title: '网络错误，请检查网络连接',
           icon: 'none',

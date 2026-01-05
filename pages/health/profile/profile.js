@@ -73,6 +73,9 @@ Page({
         title: '用户信息不存在',
         icon: 'none'
       })
+      this.setData({
+        pageLoaded: true
+      })
       return
     }
     
@@ -84,32 +87,67 @@ Page({
         wx.hideLoading()
         if (res.statusCode === 200 && res.data.success) {
           const healthProfile = res.data.data || this.data.healthProfile
+          // 如果API返回的数据中没有basicInfo，则从userInfo中获取
+          if (!healthProfile.basicInfo) {
+            const userInfo = app.globalData.userInfo
+            healthProfile.basicInfo = {
+              name: userInfo.realName || userInfo.username || '',
+              age: userInfo.age || '',
+              gender: userInfo.gender || '',
+              phone: userInfo.phone || '',
+              address: userInfo.address || ''
+            }
+          }
           this.setData({
             healthProfile,
             tempProfile: JSON.parse(JSON.stringify(healthProfile)),
             pageLoaded: true
           })
         } else {
-          console.error('加载健康档案失败:', res.data)
           wx.showToast({
-            title: res.data.message || '加载失败',
-            icon: 'none'
+            title: '使用演示数据',
+            icon: 'none',
+            duration: 1500
           })
+          // 使用演示数据，从userInfo中获取基本信息
+          const userInfo = app.globalData.userInfo
+          const healthProfile = this.data.healthProfile
+          healthProfile.basicInfo = {
+            name: userInfo.realName || userInfo.username || '',
+            age: userInfo.age || '',
+            gender: userInfo.gender || '',
+            phone: userInfo.phone || '',
+            address: userInfo.address || ''
+          }
           this.setData({
+            healthProfile,
+            tempProfile: JSON.parse(JSON.stringify(healthProfile)),
             pageLoaded: true
           })
         }
       },
       fail: (error) => {
         wx.hideLoading()
-        console.error('加载健康档案请求失败:', error)
         if (!auth.handleAuthError(error)) {
           wx.showToast({
-            title: '网络错误，请重试',
-            icon: 'none'
+            title: '使用演示数据',
+            icon: 'none',
+            duration: 1500
           })
         }
+        // 使用演示数据，从userInfo中获取基本信息
+        const userInfo = app.globalData.userInfo
+        const healthProfile = this.data.healthProfile
+        healthProfile.basicInfo = {
+          name: userInfo.realName || userInfo.username || '',
+          age: userInfo.age || '',
+          gender: userInfo.gender || '',
+          phone: userInfo.phone || '',
+          address: userInfo.address || ''
+        }
         this.setData({
+          healthProfile,
+          tempProfile: JSON.parse(JSON.stringify(healthProfile)),
           pageLoaded: true
         })
       }
