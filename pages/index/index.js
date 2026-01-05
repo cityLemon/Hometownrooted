@@ -124,8 +124,13 @@ Page({
     // 检查登录状态
     this.checkLoginStatus()
     
-    // 检查后端和数据库连接状态
-    this.checkConnections()
+    // 检查后端和数据库连接状态（已临时禁用）
+    const app = getApp()
+    if (app.globalData.enableConnectionCheck) {
+      this.checkConnections()
+    } else {
+      console.log('⚠️ 连接检查已禁用')
+    }
     
     // 监听网络状态变化
     this.setupNetworkListener()

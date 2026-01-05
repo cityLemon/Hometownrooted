@@ -57,6 +57,15 @@
         <url-pattern>/api/database/status</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>RoleSelectionServlet</servlet-name>
+        <servlet-class>com.hometownrooted.servlet.RoleSelectionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoleSelectionServlet</servlet-name>
+        <url-pattern>/role-selection</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>CORSFilter</filter-name>
         <filter-class>com.hometownrooted.servlet.CORSFilter</filter-class>

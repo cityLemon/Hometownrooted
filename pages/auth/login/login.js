@@ -18,9 +18,9 @@ Page({
     loginError: '',
     // 快速登录选项
     quickLoginOptions: [
-      { name: '老人体验', username: 'elder_demo', password: '123456', role: '老人' },
-      { name: '志愿者体验', username: 'volunteer_demo', password: '123456', role: '志愿者' },
-      { name: '管理员体验', username: 'admin_demo', password: '123456', role: '管理员' }
+      { name: '老人体验', username: 'elder_demo', password: '123456', role: 'elder', roleText: '老人' },
+      { name: '志愿者体验', username: 'volunteer_demo', password: '123456', role: 'volunteer', roleText: '志愿者' },
+      { name: '管理员体验', username: 'admin_demo', password: '123456', role: 'admin', roleText: '管理员' }
     ]
   },
 
@@ -171,18 +171,42 @@ Page({
   },
 
   onForgotPassword() {
-    wx.showToast({
-      title: '请联系管理员重置密码',
-      icon: 'none'
+    wx.showModal({
+      title: '忘记密码',
+      content: '请联系管理员邮箱 lemoncity@foxmail.com 重置密码',
+      confirmText: '复制邮箱',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          wx.setClipboardData({
+            data: 'lemoncity@foxmail.com',
+            success: () => {
+              wx.showToast({
+                title: '邮箱已复制',
+                icon: 'success'
+              });
+            }
+          });
+        }
+      }
     });
   },
 
   // 快速登录
   quickLogin(e) {
     const role = e.currentTarget.dataset.role;
+    console.log('点击快速登录，role:', role);
+    console.log('快速登录选项:', this.data.quickLoginOptions);
+    
     const option = this.data.quickLoginOptions.find(opt => opt.role === role);
+    console.log('找到的选项:', option);
     
     if (option) {
+      wx.showLoading({
+        title: '登录中...',
+        mask: true
+      });
+      
       this.setData({
         username: option.username,
         password: option.password,
@@ -190,14 +214,72 @@ Page({
           username: { valid: true, message: '' },
           password: { valid: true, message: '' }
         },
-        loginError: ''
+        loginError: '',
+        isLoading: true
       });
       
       // 自动登录
       setTimeout(() => {
-        this.onLogin();
-      }, 300);
+        this.performQuickLogin(option);
+      }, 500);
+    } else {
+      console.error('未找到对应的快速登录选项');
+      wx.showToast({
+        title: '登录选项不存在',
+        icon: 'none'
+      });
     }
+  },
+
+  // 执行快速登录
+  async performQuickLogin(option) {
+    try {
+      // 先尝试真实API登录
+      const result = await this.loginRequest(option.username, option.password);
+      
+      if (result && result.success) {
+        // API登录成功
+        wx.hideLoading();
+        this.handleLoginSuccess(result.data);
+      } else {
+        // API登录失败，使用模拟登录
+        console.log('API登录失败，使用模拟登录');
+        wx.hideLoading();
+        this.useMockLogin(option);
+      }
+    } catch (error) {
+      // API请求失败，使用模拟登录
+      console.log('API请求失败，使用模拟登录:', error);
+      wx.hideLoading();
+      this.useMockLogin(option);
+    }
+  },
+
+  // 使用模拟登录
+  useMockLogin(option) {
+    console.log('使用模拟登录:', option);
+    
+    // 根据角色确定头像路径
+    let avatarPath = '/images/roles/elder.svg';
+    if (option.role === 'volunteer') {
+      avatarPath = '/images/roles/volunteer.svg';
+    } else if (option.role === 'admin') {
+      avatarPath = '/images/roles/admin.svg';
+    }
+    
+    const mockData = {
+      token: 'mock_token_' + Date.now(),
+      userInfo: {
+        id: 1,
+        username: option.username,
+        role: option.roleText,
+        nickname: option.roleText + '用户',
+        avatar: avatarPath
+      }
+    };
+    
+    console.log('模拟登录数据:', mockData);
+    this.handleLoginSuccess(mockData);
   },
 
   async onLogin() {

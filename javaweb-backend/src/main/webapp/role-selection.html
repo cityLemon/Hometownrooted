@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乡村安土 - 角色选择</title>
+    <!-- 引入Element UI样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        .title {
+            font-size: 28px;
+            color: #303133;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #909399;
+        }
+
+        .radio-group {
+            margin-bottom: 30px;
+        }
+
+        .radio-item {
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            border: 2px solid #dcdfe6;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .radio-item:hover {
+            border-color: #409eff;
+            background: #ecf5ff;
+        }
+
+        .radio-item.is-checked {
+            border-color: #409eff;
+            background: #ecf5ff;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .radio-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            background: linear-gradient(135deg, #409eff, #53a8ff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .radio-text {
+            flex: 1;
+        }
+
+        .radio-text strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #303133;
+        }
+
+        .radio-text span {
+            font-size: 12px;
+            color: #909399;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .el-button {
+            flex: 1;
+            height: 50px;
+            font-size: 16px;
+        }
+
+        /* Element UI Radio组件样式覆盖 */
+        .el-radio {
+            margin-right: 0;
+            width: 100%;
+        }
+
+        .el-radio__input {
+            display: none;
+        }
+
+        .el-radio__label {
+            padding: 0;
+            width: 100%;
+        }
+
+        .el-radio.is-bordered {
+            padding: 15px 20px;
+            border-radius: 10px;
+        }
+
+        .el-radio.is-bordered.is-checked {
+            border-color: #409eff;
+            background: #ecf5ff;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="header">
+                <div class="logo">🏠</div>
+                <h1 class="title">乡村安土</h1>
+                <p class="subtitle">请选择您的角色</p>
+            </div>
+
+            <el-radio-group v-model="selectedRole" class="radio-group">
+                <el-radio
+                    v-for="role in roles"
+                    :key="role.value"
+                    v-model="selectedRole"
+                    :label="role.value"
+                    border
+                    class="radio-item"
+                    :class="{ 'is-checked': selectedRole === role.value }"
+                >
+                    <div class="radio-label">
+                        <div class="radio-icon" v-html="role.icon"></div>
+                        <div class="radio-text">
+                            <strong>{{ role.name }}</strong>
+                            <span>{{ role.description }}</span>
+                        </div>
+                    </div>
+                </el-radio>
+            </el-radio-group>
+
+            <div class="button-group">
+                <el-button type="primary" @click="confirmRole" :disabled="!selectedRole">
+                    确认选择
+                </el-button>
+                <el-button @click="resetSelection">
+                    重置
+                </el-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入Vue和Element UI -->
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    selectedRole: '',
+                    roles: [
+                        {
+                            value: 'elder',
+                            name: '老人',
+                            description: '健康管理、一键呼救、服务预约',
+                            icon: '👴'
+                        },
+                        {
+                            value: 'volunteer',
+                            name: '志愿者',
+                            description: '任务认领、服务记录、积分兑换',
+                            icon: '🤝'
+                        },
+                        {
+                            value: 'admin',
+                            name: '管理员',
+                            description: '服务管理、用户管理、数据看板',
+                            icon: '👨‍💼'
+                        },
+                        {
+                            value: 'government',
+                            name: '政府人员',
+                            description: '政策发布、项目监管、数据统计',
+                            icon: '🏛️'
+                        },
+                        {
+                            value: 'csr',
+                            name: '企业CSR',
+                            description: '爱心认领、公益项目、ESG报告',
+                            icon: '🏢'
+                        }
+                    ]
+                }
+            },
+            methods: {
+                confirmRole() {
+                    if (!this.selectedRole) {
+                        this.$message.warning('请选择角色');
+                        return;
+                    }
+
+                    const selectedRoleData = this.roles.find(r => r.value === this.selectedRole);
+                    this.$message.success(`已选择角色：${selectedRoleData.name}`);
+
+                    // 这里可以跳转到对应的小程序页面
+                    console.log('选择的角色:', this.selectedRole);
+                },
+                resetSelection() {
+                    this.selectedRole = '';
+                    this.$message.info('已重置选择');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,31 +1,28 @@
-// emergency.js - 一键呼救
+const auth = require('../../../utils/auth.js')
+
 Page({
   data: {
-    // 紧急联系人列表
     emergencyContacts: [
       { id: 1, name: '儿子', phone: '13800138001', relation: '子女' },
       { id: 2, name: '女儿', phone: '13800138002', relation: '子女' },
       { id: 3, name: '乡村医疗站', phone: '010-12345678', relation: '医疗服务' }
     ],
-    // 当前位置信息
     location: {
       latitude: 0,
       longitude: 0,
       address: '正在获取位置...'
     },
-    // 呼救状态
-    callStatus: 'idle', // idle, calling, success, failed
-    // 倒计时（秒）
+    callStatus: 'idle',
     countDown: 10,
-    // 定时器
     timer: null,
-    // 是否自动拨号
     autoCall: true
   },
 
   onLoad() {
     console.log('Emergency page loaded')
-    // 获取位置信息
+    if (!auth.checkLogin()) {
+      return
+    }
     this.getCurrentLocation()
   },
 
@@ -40,8 +37,11 @@ Page({
     }
   },
 
-  // 获取当前位置
   getCurrentLocation() {
+    wx.showLoading({
+      title: '获取位置中...'
+    })
+    
     wx.getLocation({
       type: 'gcj02',
       altitude: true,
@@ -51,13 +51,24 @@ Page({
           'location.latitude': latitude,
           'location.longitude': longitude
         })
-        // 逆地址解析
         this.reverseGeocode(latitude, longitude)
+        wx.hideLoading()
       },
       fail: (err) => {
+        wx.hideLoading()
         console.error('获取位置失败:', err)
         this.setData({
           'location.address': '获取位置失败，请检查权限设置'
+        })
+        wx.showModal({
+          title: '位置权限',
+          content: '需要获取您的位置信息以便紧急呼救，请授权位置权限',
+          confirmText: '去设置',
+          success: (res) => {
+            if (res.confirm) {
+              wx.openSetting()
+            }
+          }
         })
       }
     })
@@ -141,27 +152,73 @@ Page({
     }
   },
 
-  // 执行呼救
   executeCall() {
-    // 1. 发送呼救信息给紧急联系人
-    this.sendSOSMessage()
-    
-    // 2. 自动拨号（如果开启）
-    if (this.data.autoCall) {
-      this.autoDial()
-    }
-    
-    // 3. 发送信息给乡村医疗站
-    this.notifyMedicalStation()
-    
-    // 4. 更新状态
-    this.setData({
-      callStatus: 'success'
+    wx.showLoading({
+      title: '发送中...'
     })
     
-    wx.showToast({
-      title: '呼救已发送',
-      icon: 'success'
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    const sosData = {
+      userId: userId,
+      location: {
+        latitude: this.data.location.latitude,
+        longitude: this.data.location.longitude,
+        address: this.data.location.address
+      },
+      contacts: this.data.emergencyContacts,
+      timestamp: new Date().toISOString()
+    }
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/emergency/sos`,
+      method: 'POST',
+      header: auth.getAuthHeader(),
+      data: sosData,
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          this.sendSOSMessage()
+          
+          if (this.data.autoCall) {
+            this.autoDial()
+          }
+          
+          this.notifyMedicalStation()
+          
+          this.setData({
+            callStatus: 'success'
+          })
+          
+          wx.showToast({
+            title: '呼救已发送',
+            icon: 'success'
+          })
+        } else {
+          console.error('发送呼救失败:', res.data)
+          this.setData({
+            callStatus: 'failed'
+          })
+          wx.showToast({
+            title: res.data.message || '发送失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading()
+        console.error('发送呼救请求失败:', error)
+        if (!auth.handleAuthError(error)) {
+          this.setData({
+            callStatus: 'failed'
+          })
+          wx.showToast({
+            title: '网络错误，请重试',
+            icon: 'none'
+          })
+        }
+      }
     })
   },
 

@@ -34,6 +34,26 @@
     </view>
   </view>
 
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <view class="search-icon">🔍</view>
+      <input 
+        class="search-input"
+        placeholder="搜索服务记录"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+      <view 
+        class="search-clear" 
+        wx:if="{{searchKeyword}}"
+        bindtap="onClearSearch"
+      >
+        ✕
+      </view>
+    </view>
+  </view>
+
   <!-- 服务记录 -->
   <view class="section-title font-xl font-bold text-primary">服务记录</view>
   
@@ -77,6 +97,19 @@
         详情
       </button>
     </view>
+    
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{isLoading}}">
+      <view class="load-more-spinner"></view>
+      <text class="load-more-text">加载中...</text>
+    </view>
+    
+    <!-- 没有更多 -->
+    <view class="no-more" wx:if="{{!hasMore && filteredServiceRecords.length > 0}}">
+      没有更多记录了
+    </view>
+    
+    <!-- 空状态 -->
     <view wx:if="{{filteredServiceRecords.length === 0}}">
       <view class="empty-text font-lg text-secondary">暂无服务记录</view>
     </view>
@@ -110,6 +143,16 @@
         兑换
       </button>
     </view>
+  </view>
+
+  <!-- 导出按钮 -->
+  <view class="export-section">
+    <button 
+      class="btn btn-secondary btn-large font-lg"
+      bindtap="exportData"
+    >
+      导出数据
+    </button>
   </view>
 
   <!-- 兑换弹窗 -->

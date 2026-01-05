@@ -1,11 +1,9 @@
-// profile.js - 健康档案管理
+const auth = require('../../../utils/auth.js')
+
 Page({
   data: {
-    // 页面加载状态
     pageLoaded: false,
-    // 离线状态
     offline: false,
-    // 健康档案数据
     healthProfile: {
       basicInfo: {
         name: '张三',
@@ -42,15 +40,15 @@ Page({
         { id: 3, date: '2022-12-08', hospital: '北京安贞医院', diagnosis: '心电图检查' }
       ]
     },
-    // 编辑模式
     editMode: false,
-    // 临时存储编辑数据
     tempProfile: {}
   },
 
   onLoad() {
     console.log('Health profile page loaded')
-    // 从数据库获取健康档案数据
+    if (!auth.checkLogin()) {
+      return
+    }
     this.loadHealthProfile()
     this.setupNetworkListener()
   },
@@ -61,15 +59,60 @@ Page({
     this.drawHealthChart()
   },
 
-  // 加载健康档案数据
   loadHealthProfile() {
-    // 模拟从数据库获取数据
-    // 实际项目中应该调用API获取数据
-    const healthProfile = this.data.healthProfile
-    this.setData({
-      healthProfile,
-      tempProfile: JSON.parse(JSON.stringify(healthProfile)),
-      pageLoaded: true
+    wx.showLoading({
+      title: '加载中...'
+    })
+    
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    if (!userId) {
+      wx.hideLoading()
+      wx.showToast({
+        title: '用户信息不存在',
+        icon: 'none'
+      })
+      return
+    }
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/health/profile/${userId}`,
+      method: 'GET',
+      header: auth.getAuthHeader(),
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          const healthProfile = res.data.data || this.data.healthProfile
+          this.setData({
+            healthProfile,
+            tempProfile: JSON.parse(JSON.stringify(healthProfile)),
+            pageLoaded: true
+          })
+        } else {
+          console.error('加载健康档案失败:', res.data)
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'none'
+          })
+          this.setData({
+            pageLoaded: true
+          })
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading()
+        console.error('加载健康档案请求失败:', error)
+        if (!auth.handleAuthError(error)) {
+          wx.showToast({
+            title: '网络错误，请重试',
+            icon: 'none'
+          })
+        }
+        this.setData({
+          pageLoaded: true
+        })
+      }
     })
   },
 
@@ -309,23 +352,52 @@ Page({
     })
   },
 
-  // 保存编辑
   saveEdit() {
-    // 验证数据
     if (!this.validateData()) {
       return
     }
 
-    // 保存数据到数据库
-    // 实际项目中应该调用API保存数据
-    this.setData({
-      healthProfile: this.data.tempProfile,
-      editMode: false
+    wx.showLoading({
+      title: '保存中...'
     })
-
-    wx.showToast({
-      title: '保存成功',
-      icon: 'success'
+    
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/health/profile/${userId}`,
+      method: 'PUT',
+      header: auth.getAuthHeader(),
+      data: this.data.tempProfile,
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          this.setData({
+            healthProfile: this.data.tempProfile,
+            editMode: false
+          })
+          wx.showToast({
+            title: '保存成功',
+            icon: 'success'
+          })
+        } else {
+          console.error('保存健康档案失败:', res.data)
+          wx.showToast({
+            title: res.data.message || '保存失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading()
+        console.error('保存健康档案请求失败:', error)
+        if (!auth.handleAuthError(error)) {
+          wx.showToast({
+            title: '网络错误，请重试',
+            icon: 'none'
+          })
+        }
+      }
     })
   },
 

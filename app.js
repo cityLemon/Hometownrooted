@@ -5,7 +5,8 @@ App({
     token: null,
     isLoggedIn: false,
     currentRole: null,
-    baseUrl: 'http://localhost:8080/hometownrooted_backend_war_exploded'
+    baseUrl: 'http://localhost:8080/hometownrooted_backend_war_exploded',
+    enableConnectionCheck: false  // 临时禁用连接检查，避免404错误
   },
 
   onLaunch() {
@@ -13,11 +14,13 @@ App({
     console.log('🚀 App launched')
     console.log('========================================')
     
-    // 检查后端连接状态
-    this.checkBackendConnection()
-    
-    // 检查数据库连接状态（通过后端API）
-    this.checkDatabaseConnection()
+    // 检查后端连接状态（已临时禁用）
+    if (this.globalData.enableConnectionCheck) {
+      this.checkBackendConnection()
+      this.checkDatabaseConnection()
+    } else {
+      console.log('⚠️ 连接检查已禁用（enableConnectionCheck = false）')
+    }
     
     // Check for compatibility issues
     if (!wx.getMenuButtonBoundingClientRect) {

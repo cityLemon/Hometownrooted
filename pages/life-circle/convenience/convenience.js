@@ -1,207 +1,53 @@
-// convenience.js - 便民服务
+const auth = require('../../../utils/auth.js')
+
 Page({
   data: {
-    // 页面加载状态
     pageLoaded: false,
-    // 离线状态
     offline: false,
-    // 便民服务列表
-    services: [
-      {
-        id: 1,
-        name: '水电缴费',
-        icon: '/images/services/water-electricity.svg',
-        description: '水费、电费在线缴纳',
-        type: 'payment'
-      },
-      {
-        id: 2,
-        name: '快递代收',
-        icon: '/images/services/express.svg',
-        description: '快递代收代寄服务',
-        type: 'express'
-      },
-      {
-        id: 3,
-        name: '农产品代销',
-        icon: '/images/services/agriculture.svg',
-        description: '农产品在线销售',
-        type: 'agriculture'
-      },
-      {
-        id: 4,
-        name: '家政服务',
-        icon: '/images/services/housekeeping.svg',
-        description: '保洁、保姆、月嫂服务',
-        type: 'housekeeping'
-      },
-      {
-        id: 5,
-        name: '维修服务',
-        icon: '/images/services/maintenance.svg',
-        description: '家电、家具维修服务',
-        type: 'maintenance'
-      },
-      {
-        id: 6,
-        name: '法律咨询',
-        icon: '/images/services/legal.svg',
-        description: '免费法律咨询服务',
-        type: 'legal'
-      }
-    ],
-    // 过滤后的服务列表
+    isLoading: false,
+    isRefreshing: false,
+    hasMore: true,
+    services: [],
     filteredServices: [],
-    // 服务预约记录
-    bookingRecords: [
-      {
-        id: 1,
-        serviceName: '水电缴费',
-        serviceType: 'payment',
-        bookingTime: '2024-01-05 14:30:00',
-        status: 'completed',
-        amount: 120
-      },
-      {
-        id: 2,
-        serviceName: '快递代收',
-        serviceType: 'express',
-        bookingTime: '2024-01-04 10:00:00',
-        status: 'completed',
-        trackingNumber: 'SF1234567890'
-      }
-    ],
-    // 当前选中的服务类型
-    selectedServiceType: 'all', // all, payment, express, agriculture, housekeeping, maintenance, legal
-    // 预约弹窗显示状态
+    bookingRecords: [],
+    selectedServiceType: 'all',
     showBookingModal: false,
-    // 当前选中的服务
-    selectedService: null
+    selectedService: null,
+    searchKeyword: '',
+    currentPage: 1,
+    pageSize: 10
   },
 
   onLoad() {
     console.log('Convenience service page loaded')
-    // 从数据库获取便民服务列表和预约记录
-    this.loadServices()
-    
-    // 页面加载完成
+    if (!auth.checkLogin()) {
+      return
+    }
+    this.initPage()
+  },
+
+  initPage() {
     this.setData({
-      pageLoaded: true
+      isLoading: true
     })
-    // 设置网络状态监听
+    Promise.all([
+      this.loadServices(),
+      this.loadBookingRecords()
+    ]).finally(() => {
+      this.setData({
+        pageLoaded: true,
+        isLoading: false
+      })
+    })
     this.setupNetworkListener()
   },
 
-  onReady() {
-    console.log('Convenience service page ready')
-  },
-
-  // 加载便民服务列表和预约记录
-  loadServices() {
-    // 模拟从数据库获取数据
-    // 实际项目中应该调用API获取数据
-    const services = this.data.services
-    const bookingRecords = this.data.bookingRecords
-    this.setData({
-      services,
-      bookingRecords
-    })
-    // 初始化过滤后的服务列表
-    this.filterServices()
-  },
-
-  // 过滤服务列表
-  filterServices() {
-    const { services, selectedServiceType } = this.data
-    let filteredServices = []
-    
-    if (selectedServiceType === 'all') {
-      filteredServices = services
-    } else {
-      filteredServices = services.filter(item => item.type === selectedServiceType)
-    }
-    
-    this.setData({
-      filteredServices
-    })
-  },
-
-  // 切换服务类型
-  switchServiceType(e) {
-    const serviceType = e.currentTarget.dataset.type
-    this.setData({
-      selectedServiceType: serviceType
-    }, () => {
-      // 切换服务类型后重新过滤服务列表
-      this.filterServices()
-    })
-  },
-
-  // 打开预约弹窗
-  openBookingModal(e) {
-    const serviceId = e.currentTarget.dataset.id
-    const selectedService = this.data.services.find(service => service.id === serviceId)
-    this.setData({
-      showBookingModal: true,
-      selectedService
-    })
-  },
-
-  // 关闭预约弹窗
-  closeBookingModal() {
-    this.setData({
-      showBookingModal: false,
-      selectedService: null
-    })
-  },
-
-  // 确认预约
-  confirmBooking() {
-    const { selectedService } = this.data
-    
-    // 执行预约操作
-    // 实际项目中应该调用API执行预约
-    const newBooking = {
-      id: Date.now(),
-      serviceName: selectedService.name,
-      serviceType: selectedService.type,
-      bookingTime: new Date().toLocaleString('zh-CN'),
-      status: 'pending'
-    }
-    
-    this.setData({
-      bookingRecords: [newBooking, ...this.data.bookingRecords],
-      showBookingModal: false,
-      selectedService: null
-    })
-    
-    wx.showToast({
-      title: '预约成功',
-      icon: 'success'
-    })
-  },
-
-  // 查看服务详情
-  viewServiceDetail(e) {
-    const serviceId = e.currentTarget.dataset.id
-    wx.showToast({
-      title: `查看服务详情：${serviceId}`,
-      icon: 'none'
-    })
-  },
-
-  // 查看预约记录
-  viewBookingRecord(e) {
-    const recordId = e.currentTarget.dataset.id
-    wx.showToast({
-      title: `查看预约记录：${recordId}`,
-      icon: 'none'
-    })
-  },
-  
-  // 设置网络状态监听
   setupNetworkListener() {
-    // 获取当前网络状态
+    wx.onNetworkStatusChange((res) => {
+      this.setData({
+        offline: !res.isConnected
+      })
+    })
     wx.getNetworkType({
       success: (res) => {
         this.setData({
@@ -209,12 +55,406 @@ Page({
         })
       }
     })
-    
-    // 监听网络状态变化
-    wx.onNetworkStatusChange((res) => {
-      this.setData({
-        offline: !res.isConnected
+  },
+
+  loadServices(isLoadMore = false) {
+    return new Promise((resolve, reject) => {
+      const { currentPage, pageSize, selectedServiceType, searchKeyword } = this.data
+      
+      const params = {
+        page: isLoadMore ? currentPage : 1,
+        pageSize: pageSize,
+        type: selectedServiceType === 'all' ? '' : selectedServiceType,
+        keyword: searchKeyword
+      }
+
+      wx.request({
+        url: 'https://your-api.com/api/services',
+        method: 'GET',
+        data: params,
+        header: {
+          'Authorization': auth.getAuthHeader()
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.success) {
+            const newServices = res.data.data.services || []
+            const total = res.data.data.total || 0
+            
+            this.setData({
+              services: isLoadMore ? [...this.data.services, ...newServices] : newServices,
+              filteredServices: isLoadMore ? [...this.data.filteredServices, ...newServices] : newServices,
+              hasMore: (isLoadMore ? this.data.services.length : 0) + newServices.length < total,
+              currentPage: isLoadMore ? currentPage + 1 : 1
+            })
+            resolve(newServices)
+          } else {
+            console.error('Load services failed:', res.data)
+            wx.showToast({
+              title: res.data.message || '加载服务列表失败',
+              icon: 'none',
+              duration: 2000
+            })
+            reject(res.data)
+          }
+        },
+        fail: (err) => {
+          console.error('Load services error:', err)
+          wx.showToast({
+            title: '网络错误，请检查网络连接',
+            icon: 'none',
+            duration: 2000
+          })
+          
+          this.setData({
+            services: this.getMockServices(),
+            filteredServices: this.getMockServices(),
+            hasMore: false
+          })
+          resolve(this.getMockServices())
+        }
       })
     })
+  },
+
+  getMockServices() {
+    return [
+      {
+        id: 1,
+        name: '水电费缴纳',
+        description: '便捷的水电费在线缴纳服务',
+        icon: '/images/payment-icon.png',
+        type: 'payment'
+      },
+      {
+        id: 2,
+        name: '快递代收',
+        description: '专业快递代收代发服务',
+        icon: '/images/express-icon.png',
+        type: 'express'
+      },
+      {
+        id: 3,
+        name: '农产品配送',
+        description: '新鲜农产品直配到家',
+        icon: '/images/agriculture-icon.png',
+        type: 'agriculture'
+      },
+      {
+        id: 4,
+        name: '家政服务',
+        description: '专业的家政清洁服务',
+        icon: '/images/housekeeping-icon.png',
+        type: 'housekeeping'
+      },
+      {
+        id: 5,
+        name: '家电维修',
+        description: '快速上门维修服务',
+        icon: '/images/maintenance-icon.png',
+        type: 'maintenance'
+      },
+      {
+        id: 6,
+        name: '法律咨询',
+        description: '专业的法律咨询服务',
+        icon: '/images/legal-icon.png',
+        type: 'legal'
+      }
+    ]
+  },
+
+  loadBookingRecords() {
+    return new Promise((resolve, reject) => {
+      const { currentPage, pageSize } = this.data
+      
+      wx.request({
+        url: 'https://your-api.com/api/bookings',
+        method: 'GET',
+        data: {
+          page: currentPage,
+          pageSize: pageSize
+        },
+        header: {
+          'Authorization': auth.getAuthHeader()
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.success) {
+            const records = res.data.data.bookings || []
+            this.setData({
+              bookingRecords: records
+            })
+            resolve(records)
+          } else {
+            console.error('Load booking records failed:', res.data)
+            wx.showToast({
+              title: res.data.message || '加载预约记录失败',
+              icon: 'none',
+              duration: 2000
+            })
+            reject(res.data)
+          }
+        },
+        fail: (err) => {
+          console.error('Load booking records error:', err)
+          wx.showToast({
+            title: '网络错误，请检查网络连接',
+            icon: 'none',
+            duration: 2000
+          })
+          
+          this.setData({
+            bookingRecords: this.getMockBookingRecords()
+          })
+          resolve(this.getMockBookingRecords())
+        }
+      })
+    })
+  },
+
+  getMockBookingRecords() {
+    return [
+      {
+        id: 1,
+        serviceName: '水电费缴纳',
+        bookingTime: '2024-01-15 10:30',
+        status: 'completed'
+      },
+      {
+        id: 2,
+        serviceName: '家政服务',
+        bookingTime: '2024-01-16 14:00',
+        status: 'pending'
+      },
+      {
+        id: 3,
+        serviceName: '快递代收',
+        bookingTime: '2024-01-17 09:00',
+        status: 'cancelled'
+      }
+    ]
+  },
+
+  filterServices() {
+    const { services, selectedServiceType, searchKeyword } = this.data
+    let filtered = services
+
+    if (selectedServiceType !== 'all') {
+      filtered = filtered.filter(service => service.type === selectedServiceType)
+    }
+
+    if (searchKeyword) {
+      const keyword = searchKeyword.toLowerCase()
+      filtered = filtered.filter(service => 
+        service.name.toLowerCase().includes(keyword) || 
+        service.description.toLowerCase().includes(keyword)
+      )
+    }
+
+    this.setData({
+      filteredServices: filtered
+    })
+  },
+
+  refreshData(callback) {
+    this.setData({
+      isRefreshing: true
+    })
+    
+    Promise.all([
+      this.loadServices(),
+      this.loadBookingRecords()
+    ]).finally(() => {
+      this.setData({
+        isRefreshing: false
+      })
+      wx.stopPullDownRefresh()
+      if (callback && typeof callback === 'function') {
+        callback()
+      }
+    })
+  },
+
+  loadMoreRecords() {
+    if (this.data.isLoading || !this.data.hasMore) {
+      return
+    }
+    
+    this.setData({
+      isLoading: true
+    })
+    
+    this.loadServices(true).finally(() => {
+      this.setData({
+        isLoading: false
+      })
+    })
+  },
+
+  switchServiceType(e) {
+    const type = e.currentTarget.dataset.type
+    this.setData({
+      selectedServiceType: type,
+      currentPage: 1,
+      hasMore: true
+    }, () => {
+      this.filterServices()
+    })
+  },
+
+  onSearchInput: debounce(function(e) {
+    const keyword = e.detail.value
+    this.setData({
+      searchKeyword: keyword
+    }, () => {
+      this.filterServices()
+    })
+  }, 300),
+
+  onClearSearch() {
+    this.setData({
+      searchKeyword: ''
+    }, () => {
+      this.filterServices()
+    })
+  },
+
+  openBookingModal(e) {
+    const serviceId = e.currentTarget.dataset.id
+    const service = this.data.services.find(s => s.id === serviceId)
+    
+    if (service) {
+      this.setData({
+        selectedService: service,
+        showBookingModal: true
+      })
+    } else {
+      wx.showToast({
+        title: '服务信息不存在',
+        icon: 'none',
+        duration: 2000
+      })
+    }
+  },
+
+  closeBookingModal() {
+    this.setData({
+      showBookingModal: false,
+      selectedService: null
+    })
+  },
+
+  confirmBooking() {
+    if (!this.data.selectedService) {
+      wx.showToast({
+        title: '请选择服务',
+        icon: 'none',
+        duration: 2000
+      })
+      return
+    }
+
+    wx.showLoading({
+      title: '预约中...'
+    })
+
+    wx.request({
+      url: 'https://your-api.com/api/bookings',
+      method: 'POST',
+      data: {
+        serviceId: this.data.selectedService.id,
+        serviceName: this.data.selectedService.name
+      },
+      header: {
+        'Authorization': auth.getAuthHeader(),
+        'Content-Type': 'application/json'
+      },
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          wx.showToast({
+            title: '预约成功',
+            icon: 'success',
+            duration: 2000
+          })
+          this.closeBookingModal()
+          this.loadBookingRecords()
+        } else {
+          wx.showToast({
+            title: res.data.message || '预约失败',
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        console.error('Booking error:', err)
+        wx.showToast({
+          title: '网络错误，请检查网络连接',
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    })
+  },
+
+  viewServiceDetail(e) {
+    const serviceId = e.currentTarget.dataset.serviceId
+    const service = this.data.services.find(s => s.id === serviceId)
+    
+    if (service) {
+      wx.navigateTo({
+        url: `/pages/life-circle/service-detail/service-detail?id=${serviceId}`
+      })
+    } else {
+      wx.showToast({
+        title: '服务信息不存在',
+        icon: 'none',
+        duration: 2000
+      })
+    }
+  },
+
+  viewBookingRecord(e) {
+    const recordId = e.currentTarget.dataset.recordId
+    const record = this.data.bookingRecords.find(r => r.id === recordId)
+    
+    if (record) {
+      wx.navigateTo({
+        url: `/pages/life-circle/booking-detail/booking-detail?id=${recordId}`
+      })
+    } else {
+      wx.showToast({
+        title: '预约记录不存在',
+        icon: 'none',
+        duration: 2000
+      })
+    }
+  },
+
+  onPullDownRefresh() {
+    this.refreshData()
+  },
+
+  onReachBottom() {
+    this.loadMoreRecords()
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '便民服务',
+      path: '/pages/life-circle/convenience/convenience'
+    }
   }
 })
+
+function debounce(func, wait) {
+  let timeout
+  return function(...args) {
+    const context = this
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      func.apply(context, args)
+    }, wait)
+  }
+}

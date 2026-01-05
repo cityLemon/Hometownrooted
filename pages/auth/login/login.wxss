@@ -195,30 +195,63 @@
 .quick-login-options {
   display: flex;
   justify-content: space-around;
+  gap: 20rpx;
 }
 
 .quick-login-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20rpx;
+  padding: 30rpx 20rpx;
+  background: #f8f9fa;
+  border-radius: 16rpx;
   cursor: pointer;
   transition: all 0.3s ease;
+  border: 2rpx solid transparent;
 }
 
 .quick-login-item:hover {
-  transform: scale(1.05);
+  transform: translateY(-4rpx);
+  background: #fff8f5;
+  border-color: #ff9a56;
+  box-shadow: 0 8rpx 24rpx rgba(255, 154, 86, 0.2);
+}
+
+.quick-login-item:active {
+  transform: translateY(-2rpx);
+  background: #fff3ed;
+}
+
+.quick-icon-wrapper {
+  width: 100rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(255, 154, 86, 0.3);
 }
 
 .quick-icon {
-  width: 80rpx;
-  height: 80rpx;
-  margin-bottom: 10rpx;
+  width: 60rpx;
+  height: 60rpx;
 }
 
-.quick-login-item text {
-  font-size: 24rpx;
-  color: #666;
+.quick-login-text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.quick-login-desc {
+  font-size: 22rpx;
+  color: #999;
+  text-align: center;
+  line-height: 1.4;
 }
 
 /* 输入框聚焦时的橙色边框 */

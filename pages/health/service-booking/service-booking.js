@@ -1,11 +1,9 @@
-// pages/health/service-booking/service-booking.js
+const auth = require('../../../utils/auth.js')
+
 Page({
   data: {
-    // 页面加载状态
     pageLoaded: false,
-    // 选中的服务分类
     selectedCategory: 'all',
-    // 服务分类
     serviceCategories: [
       { id: 'all', name: '全部服务', icon: '🏥' },
       { id: 'medical', name: '医疗服务', icon: '👨‍⚕️' },
@@ -14,7 +12,6 @@ Page({
       { id: 'housekeeping', name: '家政服务', icon: '🏠' },
       { id: 'meal', name: '餐饮服务', icon: '🍽️' }
     ],
-    // 可用服务列表
     availableServices: [
       {
         id: 1,
@@ -83,7 +80,6 @@ Page({
         reviewCount: 189
       }
     ],
-    // 我的预约
     myBookings: [
       {
         id: 1,
@@ -108,6 +104,9 @@ Page({
 
   onLoad(options) {
     console.log('Service booking page loaded')
+    if (!auth.checkLogin()) {
+      return
+    }
     this.loadServices()
   },
 
@@ -119,20 +118,79 @@ Page({
     this.loadMyBookings()
   },
 
-  // 加载服务数据
   loadServices() {
-    // 模拟加载服务数据
-    setTimeout(() => {
-      this.setData({
-        pageLoaded: true
-      })
-    }, 1000)
+    wx.showLoading({
+      title: '加载中...'
+    })
+    
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/health/services`,
+      method: 'GET',
+      header: auth.getAuthHeader(),
+      data: {
+        category: this.data.selectedCategory
+      },
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          const services = res.data.data?.services || this.data.availableServices
+          this.setData({
+            availableServices: services,
+            pageLoaded: true
+          })
+        } else {
+          console.error('加载服务列表失败:', res.data)
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'none'
+          })
+          this.setData({
+            pageLoaded: true
+          })
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading()
+        console.error('加载服务列表请求失败:', error)
+        if (!auth.handleAuthError(error)) {
+          wx.showToast({
+            title: '网络错误，请重试',
+            icon: 'none'
+          })
+        }
+        this.setData({
+          pageLoaded: true
+        })
+      }
+    })
   },
 
-  // 加载我的预约
   loadMyBookings() {
-    // 模拟加载预约数据
-    // 实际项目中应该从服务器获取
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/health/bookings/${userId}`,
+      method: 'GET',
+      header: auth.getAuthHeader(),
+      success: (res) => {
+        if (res.statusCode === 200 && res.data.success) {
+          const bookings = res.data.data?.bookings || []
+          this.setData({
+            myBookings: bookings
+          })
+        } else {
+          console.error('加载预约记录失败:', res.data)
+        }
+      },
+      fail: (error) => {
+        console.error('加载预约记录请求失败:', error)
+        auth.handleAuthError(error)
+      }
+    })
   },
 
   // 选择服务分类

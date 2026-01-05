@@ -1,5 +1,6 @@
 {
   "navigationStyle": "default",
   "navigationBarTitleText": "生活圈",
-  "enablePullDownRefresh": false
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50
 }

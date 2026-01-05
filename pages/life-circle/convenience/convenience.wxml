@@ -22,6 +22,27 @@
   
   <!-- 页面内容 -->
   <view class="page-content">
+  
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <view class="search-icon">🔍</view>
+      <input 
+        class="search-input"
+        placeholder="搜索便民服务"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+      <view 
+        class="search-clear" 
+        wx:if="{{searchKeyword}}"
+        bindtap="onClearSearch"
+      >
+        ✕
+      </view>
+    </view>
+  </view>
+
   <!-- 服务类型切换 -->
   <view class="service-type-tabs">
     <scroll-view scroll-x="true" enable-flex="true" class="scroll-view-horizontal">
@@ -72,6 +93,19 @@
           </button>
         </view>
       </view>
+      
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{isLoading}}">
+        <view class="load-more-spinner"></view>
+        <text class="load-more-text">加载中...</text>
+      </view>
+      
+      <!-- 没有更多 -->
+      <view class="no-more" wx:if="{{!hasMore && filteredServices.length > 0}}">
+        没有更多服务了
+      </view>
+      
+      <!-- 空状态 -->
       <view wx:if="{{filteredServices.length === 0}}">
         <view class="empty-text font-lg text-secondary">暂无相关服务</view>
       </view>
@@ -107,36 +141,36 @@
   </view>
 
   <!-- 预约弹窗 -->
-  <view class="modal-overlay" wx:if="{{showBookingModal}}"></view>
-  <view class="modal" wx:if="{{showBookingModal}}">
-    <view class="modal-header">
+  <view class="modal-mask" wx:if="{{showBookingModal}}"></view>
+  <view class="modal-container" wx:if="{{showBookingModal}}">
+    <view class="modal-content">
       <view class="modal-title font-xl font-bold text-primary">确认预约</view>
-    </view>
-    <view class="modal-body">
-      <view class="modal-item">
-        <view class="modal-item-label font-lg text-primary">服务名称</view>
-        <view class="modal-item-value font-lg font-medium text-primary">{{selectedService.name}}</view>
+      <view class="modal-body">
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">服务名称</view>
+          <view class="modal-item-value font-lg font-medium text-primary">{{selectedService.name}}</view>
+        </view>
+        <view class="modal-item">
+          <view class="modal-item-label font-lg text-primary">服务描述</view>
+          <view class="modal-item-value font-lg text-secondary">{{selectedService.description}}</view>
+        </view>
       </view>
-      <view class="modal-item">
-        <view class="modal-item-label font-lg text-primary">服务描述</view>
-        <view class="modal-item-value font-lg text-secondary">{{selectedService.description}}</view>
+      <view class="modal-footer">
+        <button 
+          class="btn btn-secondary font-lg"
+          bindtap="closeBookingModal"
+          style="margin-right: 20rpx; flex: 1;"
+        >
+          取消
+        </button>
+        <button 
+          class="btn btn-primary font-lg"
+          bindtap="confirmBooking"
+          style="flex: 1;"
+        >
+          确认预约
+        </button>
       </view>
-    </view>
-    <view class="modal-footer">
-      <button 
-        class="btn btn-secondary font-lg"
-        bindtap="closeBookingModal"
-        style="margin-right: 20rpx; flex: 1;"
-      >
-        取消
-      </button>
-      <button 
-        class="btn btn-primary font-lg"
-        bindtap="confirmBooking"
-        style="flex: 1;"
-      >
-        确认预约
-      </button>
     </view>
   </view>
   </view>

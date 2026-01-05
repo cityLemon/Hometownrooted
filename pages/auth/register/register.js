@@ -394,5 +394,12 @@ Page({
     };
     
     return errorMap[message] || message || '注册失败，请重试';
+  },
+
+  // 跳转到登录页面
+  onLogin() {
+    wx.navigateTo({
+      url: '/pages/auth/login/login'
+    });
   }
 });

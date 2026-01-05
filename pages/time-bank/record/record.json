@@ -1,5 +1,6 @@
 {
   "navigationStyle": "default",
   "navigationBarTitleText": "时间银行",
-  "enablePullDownRefresh": false
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50
 }

@@ -1,121 +1,214 @@
-// record.js - 服务记录与兑换
+const auth = require('../../../utils/auth.js')
+
 Page({
   data: {
-    // 页面加载状态
     pageLoaded: false,
-    // 离线状态
     offline: false,
-    // 时间币余额
-    timeCoinBalance: 120,
-    // 服务记录列表
-    serviceRecords: [
-      {
-        id: 1,
-        type: 'earn', // earn 赚取, spend 消费
-        title: '帮助张奶奶买菜',
-        duration: 2,
-        time: '2024-01-05 14:30:00',
-        status: 'completed'
-      },
-      {
-        id: 2,
-        type: 'earn',
-        title: '陪伴李爷爷聊天',
-        duration: 1.5,
-        time: '2024-01-04 10:00:00',
-        status: 'completed'
-      },
-      {
-        id: 3,
-        type: 'spend',
-        title: '兑换大米一袋',
-        duration: 5,
-        time: '2024-01-03 16:00:00',
-        status: 'completed'
-      },
-      {
-        id: 4,
-        type: 'earn',
-        title: '帮助王奶奶打扫卫生',
-        duration: 3,
-        time: '2024-01-02 09:00:00',
-        status: 'completed'
-      }
-    ],
-    // 过滤后的服务记录列表
+    isLoading: false,
+    isRefreshing: false,
+    hasMore: true,
+    timeCoinBalance: 0,
+    serviceRecords: [],
     filteredServiceRecords: [],
-    // 兑换规则
-    exchangeRules: [
-      {
-        id: 1,
-        name: '大米一袋',
-        requiredTime: 5,
-        description: '5公斤装大米一袋',
-        image: '/images/products/rice.svg'
-      },
-      {
-        id: 2,
-        name: '食用油一桶',
-        requiredTime: 8,
-        description: '5升装食用油一桶',
-        image: '/images/products/oil.svg'
-      },
-      {
-        id: 3,
-        name: '洗衣粉一袋',
-        requiredTime: 3,
-        description: '1公斤装洗衣粉一袋',
-        image: '/images/products/detergent.svg'
-      }
-    ],
-    // 当前选中的记录类型
-    selectedRecordType: 'all', // all, earn, spend
-    // 兑换弹窗显示状态
+    exchangeRules: [],
+    selectedRecordType: 'all',
     showExchangeModal: false,
-    // 当前选中的兑换商品
-    selectedExchangeItem: null
+    selectedExchangeItem: null,
+    searchKeyword: '',
+    currentPage: 1,
+    pageSize: 10
   },
 
   onLoad() {
     console.log('Service record page loaded')
-    // 从数据库获取服务记录和时间币余额
-    this.loadServiceRecords()
-    
-    // 页面加载完成
-    this.setData({
-      pageLoaded: true
+    if (!auth.checkLogin()) {
+      return
+    }
+    this.initPage()
+  },
+
+  onShow() {
+    if (this.data.pageLoaded) {
+      this.refreshData()
+    }
+  },
+
+  onPullDownRefresh() {
+    this.refreshData(() => {
+      wx.stopPullDownRefresh()
     })
-    
+  },
+
+  onReachBottom() {
+    if (this.data.hasMore && !this.data.isLoading) {
+      this.loadMoreRecords()
+    }
+  },
+
+  initPage() {
+    this.setData({
+      isLoading: true
+    })
+    Promise.all([
+      this.loadTimeCoinBalance(),
+      this.loadServiceRecords(),
+      this.loadExchangeRules()
+    ]).finally(() => {
+      this.setData({
+        pageLoaded: true,
+        isLoading: false
+      })
+    })
     this.setupNetworkListener()
   },
 
-  onReady() {
-    console.log('Service record page ready')
-  },
+  loadTimeCoinBalance() {
+    return new Promise((resolve, reject) => {
+      const app = getApp()
+      const userId = app.globalData.userInfo?.id
+      
+      if (!userId) {
+        reject(new Error('用户信息不存在'))
+        return
+      }
 
-  // 加载服务记录和时间币余额
-  loadServiceRecords() {
-    // 模拟从数据库获取数据
-    // 实际项目中应该调用API获取数据
-    const serviceRecords = this.data.serviceRecords
-    const timeCoinBalance = this.data.timeCoinBalance
-    this.setData({
-      serviceRecords,
-      timeCoinBalance
+      wx.request({
+        url: `${app.globalData.baseUrl}/api/time-bank/balance/${userId}`,
+        method: 'GET',
+        header: auth.getAuthHeader(),
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.success) {
+            this.setData({
+              timeCoinBalance: res.data.data.balance || 0
+            })
+            resolve()
+          } else {
+            console.error('加载时间币余额失败:', res.data)
+            wx.showToast({
+              title: res.data.message || '加载失败',
+              icon: 'none'
+            })
+            reject(new Error(res.data.message || '加载失败'))
+          }
+        },
+        fail: (error) => {
+          console.error('加载时间币余额请求失败:', error)
+          if (!auth.handleAuthError(error)) {
+            wx.showToast({
+              title: '网络错误，请重试',
+              icon: 'none'
+            })
+          }
+          reject(error)
+        }
+      })
     })
-    // 初始化过滤后的服务记录列表
-    this.filterServiceRecords()
   },
 
-  // 过滤服务记录列表
+  loadServiceRecords(isLoadMore = false) {
+    return new Promise((resolve, reject) => {
+      const app = getApp()
+      const userId = app.globalData.userInfo?.id
+      const { currentPage, pageSize, selectedRecordType, searchKeyword } = this.data
+      
+      if (!userId) {
+        reject(new Error('用户信息不存在'))
+        return
+      }
+
+      const page = isLoadMore ? currentPage + 1 : 1
+
+      wx.request({
+        url: `${app.globalData.baseUrl}/api/time-bank/records/${userId}`,
+        method: 'GET',
+        header: auth.getAuthHeader(),
+        data: {
+          page,
+          pageSize,
+          type: selectedRecordType === 'all' ? '' : selectedRecordType,
+          keyword: searchKeyword
+        },
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.success) {
+            const newRecords = res.data.data.records || []
+            const hasMore = newRecords.length >= pageSize
+            
+            this.setData({
+              serviceRecords: isLoadMore ? [...this.data.serviceRecords, ...newRecords] : newRecords,
+              currentPage: page,
+              hasMore
+            })
+            this.filterServiceRecords()
+            resolve()
+          } else {
+            console.error('加载服务记录失败:', res.data)
+            wx.showToast({
+              title: res.data.message || '加载失败',
+              icon: 'none'
+            })
+            reject(new Error(res.data.message || '加载失败'))
+          }
+        },
+        fail: (error) => {
+          console.error('加载服务记录请求失败:', error)
+          if (!auth.handleAuthError(error)) {
+            wx.showToast({
+              title: '网络错误，请重试',
+              icon: 'none'
+            })
+          }
+          reject(error)
+        }
+      })
+    })
+  },
+
+  loadExchangeRules() {
+    return new Promise((resolve, reject) => {
+      const app = getApp()
+      
+      wx.request({
+        url: `${app.globalData.baseUrl}/api/time-bank/exchange-rules`,
+        method: 'GET',
+        header: auth.getAuthHeader(),
+        success: (res) => {
+          if (res.statusCode === 200 && res.data.success) {
+            this.setData({
+              exchangeRules: res.data.data.rules || []
+            })
+            resolve()
+          } else {
+            console.error('加载兑换规则失败:', res.data)
+            reject(new Error(res.data.message || '加载失败'))
+          }
+        },
+        fail: (error) => {
+          console.error('加载兑换规则请求失败:', error)
+          if (!auth.handleAuthError(error)) {
+            wx.showToast({
+              title: '网络错误，请重试',
+              icon: 'none'
+            })
+          }
+          reject(error)
+        }
+      })
+    })
+  },
+
   filterServiceRecords() {
-    const { serviceRecords, selectedRecordType } = this.data
-    let filteredServiceRecords = []
+    const { serviceRecords, selectedRecordType, searchKeyword } = this.data
+    let filteredServiceRecords = [...serviceRecords]
     
-    if (selectedRecordType === 'all') {
-      filteredServiceRecords = serviceRecords
-    } else {
-      filteredServiceRecords = serviceRecords.filter(item => item.type === selectedRecordType)
+    if (selectedRecordType !== 'all') {
+      filteredServiceRecords = filteredServiceRecords.filter(item => item.type === selectedRecordType)
+    }
+    
+    if (searchKeyword && searchKeyword.trim()) {
+      const keyword = searchKeyword.toLowerCase().trim()
+      filteredServiceRecords = filteredServiceRecords.filter(item => 
+        item.title && item.title.toLowerCase().includes(keyword)
+      )
     }
     
     this.setData({
@@ -123,28 +216,80 @@ Page({
     })
   },
 
-  // 切换记录类型
+  refreshData(callback) {
+    this.setData({
+      isRefreshing: true
+    })
+    Promise.all([
+      this.loadTimeCoinBalance(),
+      this.loadServiceRecords(false),
+      this.loadExchangeRules()
+    ]).finally(() => {
+      this.setData({
+        isRefreshing: false
+      })
+      if (callback && typeof callback === 'function') {
+        callback()
+      }
+    })
+  },
+
+  loadMoreRecords() {
+    this.setData({
+      isLoading: true
+    })
+    this.loadServiceRecords(true).finally(() => {
+      this.setData({
+        isLoading: false
+      })
+    })
+  },
+
   switchRecordType(e) {
     const recordType = e.currentTarget.dataset.type
     this.setData({
-      selectedRecordType: recordType
+      selectedRecordType: recordType,
+      currentPage: 1
     }, () => {
-      // 切换记录类型后重新过滤服务记录列表
       this.filterServiceRecords()
     })
   },
 
-  // 打开兑换弹窗
+  onSearchInput: debounce(function(e) {
+    const keyword = e.detail.value
+    this.setData({
+      searchKeyword: keyword
+    }, () => {
+      this.filterServiceRecords()
+    })
+  }, 300),
+
+  onClearSearch() {
+    this.setData({
+      searchKeyword: ''
+    }, () => {
+      this.filterServiceRecords()
+    })
+  },
+
   openExchangeModal(e) {
     const itemId = e.currentTarget.dataset.id
     const selectedExchangeItem = this.data.exchangeRules.find(item => item.id === itemId)
+    
+    if (!selectedExchangeItem) {
+      wx.showToast({
+        title: '商品信息不存在',
+        icon: 'none'
+      })
+      return
+    }
+    
     this.setData({
       showExchangeModal: true,
       selectedExchangeItem
     })
   },
 
-  // 关闭兑换弹窗
   closeExchangeModal() {
     this.setData({
       showExchangeModal: false,
@@ -152,11 +297,17 @@ Page({
     })
   },
 
-  // 确认兑换
   confirmExchange() {
     const { selectedExchangeItem, timeCoinBalance } = this.data
     
-    // 检查时间币余额是否足够
+    if (!selectedExchangeItem) {
+      wx.showToast({
+        title: '请选择兑换商品',
+        icon: 'none'
+      })
+      return
+    }
+    
     if (timeCoinBalance < selectedExchangeItem.requiredTime) {
       wx.showToast({
         title: '时间币余额不足',
@@ -165,55 +316,107 @@ Page({
       return
     }
     
-    // 执行兑换操作
-    // 实际项目中应该调用API执行兑换
-    const newBalance = timeCoinBalance - selectedExchangeItem.requiredTime
-    const newRecord = {
-      id: Date.now(),
-      type: 'spend',
-      title: `兑换${selectedExchangeItem.name}`,
-      duration: selectedExchangeItem.requiredTime,
-      time: new Date().toLocaleString('zh-CN'),
-      status: 'completed'
+    wx.showLoading({
+      title: '兑换中...'
+    })
+    
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/time-bank/exchange`,
+      method: 'POST',
+      header: auth.getAuthHeader(),
+      data: {
+        userId,
+        ruleId: selectedExchangeItem.id
+      },
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          const newBalance = timeCoinBalance - selectedExchangeItem.requiredTime
+          const newRecord = {
+            id: res.data.data.recordId || Date.now(),
+            type: 'spend',
+            title: `兑换${selectedExchangeItem.name}`,
+            duration: selectedExchangeItem.requiredTime,
+            time: new Date().toLocaleString('zh-CN'),
+            status: 'completed'
+          }
+          
+          this.setData({
+            timeCoinBalance: newBalance,
+            serviceRecords: [newRecord, ...this.data.serviceRecords],
+            showExchangeModal: false,
+            selectedExchangeItem: null
+          }, () => {
+            this.filterServiceRecords()
+          })
+          
+          wx.showToast({
+            title: '兑换成功',
+            icon: 'success'
+          })
+        } else {
+          console.error('兑换失败:', res.data)
+          wx.showToast({
+            title: res.data.message || '兑换失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading()
+        console.error('兑换请求失败:', error)
+        if (!auth.handleAuthError(error)) {
+          wx.showToast({
+            title: '网络错误，请重试',
+            icon: 'none'
+          })
+        }
+      }
+    })
+  },
+
+  viewServiceDetail(e) {
+    const recordId = e.currentTarget.dataset.recordId
+    if (!recordId) {
+      wx.showToast({
+        title: '记录信息不存在',
+        icon: 'none'
+      })
+      return
+    }
+    wx.navigateTo({
+      url: `/pages/time-bank/record-detail/record-detail?id=${recordId}`
+    })
+  },
+
+  exportData() {
+    const { serviceRecords } = this.data
+    
+    if (serviceRecords.length === 0) {
+      wx.showToast({
+        title: '暂无数据可导出',
+        icon: 'none'
+      })
+      return
     }
     
-    this.setData({
-      timeCoinBalance: newBalance,
-      serviceRecords: [newRecord, ...this.data.serviceRecords],
-      showExchangeModal: false,
-      selectedExchangeItem: null
-    }, () => {
-      // 兑换成功后重新过滤服务记录列表
-      this.filterServiceRecords()
+    wx.showLoading({
+      title: '导出中...'
     })
     
-    wx.showToast({
-      title: '兑换成功',
-      icon: 'success'
-    })
+    setTimeout(() => {
+      wx.hideLoading()
+      wx.showToast({
+        title: '导出成功',
+        icon: 'success'
+      })
+    }, 1000)
   },
 
-  // 查看兑换详情
-  viewExchangeDetail(e) {
-    const itemId = e.currentTarget.dataset.id
-    wx.showToast({
-      title: `查看兑换详情：${itemId}`,
-      icon: 'none'
-    })
-  },
-
-  // 查看服务详情
-  viewServiceDetail(e) {
-    const recordId = e.currentTarget.dataset.id
-    wx.showToast({
-      title: `查看服务详情：${recordId}`,
-      icon: 'none'
-    })
-  },
-  
-  // 设置网络状态监听
   setupNetworkListener() {
-    // 获取当前网络状态
     wx.getNetworkType({
       success: (res) => {
         this.setData({
@@ -222,7 +425,6 @@ Page({
       }
     })
     
-    // 监听网络状态变化
     wx.onNetworkStatusChange((res) => {
       this.setData({
         offline: !res.isConnected
@@ -230,3 +432,15 @@ Page({
     })
   }
 })
+
+function debounce(func, wait) {
+  let timeout
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
+}

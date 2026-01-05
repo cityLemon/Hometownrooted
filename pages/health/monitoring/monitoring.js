@@ -1,15 +1,14 @@
-// monitoring.js - 健康监测数据
+const auth = require('../../../utils/auth.js')
+
 Page({
   data: {
-    // 健康监测数据
     healthData: {
-      // 实时数据
       realTime: {
         bloodPressure: {
           systolic: 120,
           diastolic: 80,
           unit: 'mmHg',
-          status: 'normal' // normal, warning, danger
+          status: 'normal'
         },
         heartRate: {
           value: 72,
@@ -27,7 +26,6 @@ Page({
           status: 'normal'
         }
       },
-      // 历史数据
       history: {
         bloodPressure: [
           { date: '2024-01-01', systolic: 120, diastolic: 80, status: 'normal' },
@@ -51,22 +49,21 @@ Page({
           { date: '2024-01-05', value: 5.5, status: 'normal' }
         ]
       },
-      // 设备连接状态
       deviceStatus: {
         connected: true,
         lastSyncTime: '2024-01-05 14:30:00',
         battery: 85
       }
     },
-    // 当前选中的数据类型
     selectedDataType: 'bloodPressure',
-    // 时间范围
-    timeRange: 'week' // day, week, month
+    timeRange: 'week'
   },
 
   onLoad() {
     console.log('Health monitoring page loaded')
-    // 从数据库获取健康监测数据
+    if (!auth.checkLogin()) {
+      return
+    }
     this.loadHealthData()
   },
 
@@ -74,13 +71,46 @@ Page({
     console.log('Health monitoring page ready')
   },
 
-  // 加载健康监测数据
   loadHealthData() {
-    // 模拟从数据库获取数据
-    // 实际项目中应该调用API获取数据
-    const healthData = this.data.healthData
-    this.setData({
-      healthData
+    wx.showLoading({
+      title: '加载中...'
+    })
+    
+    const app = getApp()
+    const userId = app.globalData.userInfo?.id
+    
+    wx.request({
+      url: `${app.globalData.baseUrl}/api/health/monitoring/${userId}`,
+      method: 'GET',
+      header: auth.getAuthHeader(),
+      data: {
+        timeRange: this.data.timeRange
+      },
+      success: (res) => {
+        wx.hideLoading()
+        if (res.statusCode === 200 && res.data.success) {
+          const healthData = res.data.data || this.data.healthData
+          this.setData({
+            healthData
+          })
+        } else {
+          console.error('加载健康监测数据失败:', res.data)
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading()
+        console.error('加载健康监测数据请求失败:', error)
+        if (!auth.handleAuthError(error)) {
+          wx.showToast({
+            title: '网络错误，请重试',
+            icon: 'none'
+          })
+        }
+      }
     })
   },
 

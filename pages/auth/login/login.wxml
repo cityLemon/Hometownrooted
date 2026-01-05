@@ -45,7 +45,7 @@
     </view>
 
     <view class="form-options">
-      <checkbox-group bindchange="onRememberMeChange" class="remember-group">
+      <checkbox-group bindchange="onRememberChange" class="remember-group">
         <label class="checkbox-item">
           <checkbox value="remember" checked="{{rememberMe}}" />
           <text>记住用户名</text>
@@ -71,22 +71,31 @@
     <view class="quick-login">
       <view class="divider">
         <view class="line"></view>
-        <text class="divider-text">快速登录</text>
+        <text class="divider-text">快速体验登录</text>
         <view class="line"></view>
       </view>
       
       <view class="quick-login-options">
         <view class="quick-login-item" bindtap="quickLogin" data-role="elder">
-          <image class="quick-icon" src="/images/roles/elder.svg"></image>
-          <text>老人体验</text>
+          <view class="quick-icon-wrapper">
+            <image class="quick-icon" src="/images/roles/elder.svg"></image>
+          </view>
+          <text class="quick-login-text">老人体验</text>
+          <text class="quick-login-desc">查看健康服务</text>
         </view>
         <view class="quick-login-item" bindtap="quickLogin" data-role="volunteer">
-          <image class="quick-icon" src="/images/roles/volunteer.svg"></image>
-          <text>志愿者体验</text>
+          <view class="quick-icon-wrapper">
+            <image class="quick-icon" src="/images/roles/volunteer.svg"></image>
+          </view>
+          <text class="quick-login-text">志愿者体验</text>
+          <text class="quick-login-desc">参与志愿服务</text>
         </view>
         <view class="quick-login-item" bindtap="quickLogin" data-role="admin">
-          <image class="quick-icon" src="/images/roles/admin.svg"></image>
-          <text>管理员体验</text>
+          <view class="quick-icon-wrapper">
+            <image class="quick-icon" src="/images/roles/admin.svg"></image>
+          </view>
+          <text class="quick-login-text">管理员体验</text>
+          <text class="quick-login-desc">管理系统功能</text>
         </view>
       </view>
     </view>
