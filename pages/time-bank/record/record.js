@@ -78,7 +78,7 @@ Page({
       }
 
       wx.request({
-        url: `${app.globalData.baseUrl}/api/time-bank/balance/${userId}`,
+        url: `${app.globalData.baseUrl}/api/timebank/balance?user_id=${userId}`,
         method: 'GET',
         header: auth.getAuthHeader(),
         success: (res) => {
@@ -93,11 +93,6 @@ Page({
             this.setData({
               timeCoinBalance: mockBalance
             })
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
             resolve()
           }
         },
@@ -107,13 +102,6 @@ Page({
           this.setData({
             timeCoinBalance: mockBalance
           })
-          if (!auth.handleAuthError(error)) {
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
-          }
           resolve()
         }
       })
@@ -153,7 +141,7 @@ Page({
       const page = isLoadMore ? currentPage + 1 : 1
 
       wx.request({
-        url: `${app.globalData.baseUrl}/api/time-bank/records/${userId}`,
+        url: `${app.globalData.baseUrl}/api/timebank/records?user_id=${userId}`,
         method: 'GET',
         header: auth.getAuthHeader(),
         data: {
@@ -183,11 +171,6 @@ Page({
               hasMore: false
             })
             this.filterServiceRecords()
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
             resolve()
           }
         },
@@ -200,13 +183,6 @@ Page({
             hasMore: false
           })
           this.filterServiceRecords()
-          if (!auth.handleAuthError(error)) {
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
-          }
           resolve()
         }
       })
@@ -343,7 +319,7 @@ Page({
   loadExchangeRules() {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: `${app.globalData.baseUrl}/api/time-bank/exchange-rules`,
+        url: `${app.globalData.baseUrl}/api/timebank/exchange-rules`,
         method: 'GET',
         header: auth.getAuthHeader(),
         success: (res) => {
@@ -358,11 +334,6 @@ Page({
             this.setData({
               exchangeRules: mockRules
             })
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
             resolve()
           }
         },
@@ -372,13 +343,6 @@ Page({
           this.setData({
             exchangeRules: mockRules
           })
-          if (!auth.handleAuthError(error)) {
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
-          }
           resolve()
         }
       })

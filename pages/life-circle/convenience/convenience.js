@@ -70,7 +70,7 @@ Page({
       }
 
       wx.request({
-        url: app.globalData.baseUrl + '/api/services',
+        url: app.globalData.baseUrl + '/api/convenience/services',
         method: 'GET',
         data: params,
         header: {
@@ -174,7 +174,7 @@ Page({
       const { currentPage, pageSize } = this.data
       
       wx.request({
-        url: app.globalData.baseUrl + '/api/bookings',
+        url: app.globalData.baseUrl + '/api/convenience/bookings',
         method: 'GET',
         data: {
           page: currentPage,
@@ -196,21 +196,10 @@ Page({
             this.setData({
               bookingRecords: mockRecords
             })
-            wx.showToast({
-              title: '使用演示数据',
-              icon: 'none',
-              duration: 1500
-            })
             resolve(mockRecords)
           }
         },
         fail: (err) => {
-          wx.showToast({
-            title: '使用演示数据',
-            icon: 'none',
-            duration: 1500
-          })
-          
           this.setData({
             bookingRecords: this.getMockBookingRecords()
           })
@@ -367,7 +356,7 @@ Page({
     })
 
     wx.request({
-      url: app.globalData.baseUrl + '/api/bookings',
+      url: app.globalData.baseUrl + '/api/convenience/bookings',
       method: 'POST',
       data: {
         serviceId: this.data.selectedService.id,

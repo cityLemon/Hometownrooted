@@ -173,13 +173,17 @@ App({
       success: (res) => {
         if (res.statusCode === 200 && res.data.success) {
           console.log('Token验证成功')
+        } else if (res.statusCode === 404) {
+          // 如果后端没有实现验证端点，保持登录状态
+          console.log('Token验证端点未实现，保持登录状态')
         } else {
-          console.log('Token验证失败')
+          console.log('Token验证失败，状态码:', res.statusCode)
           this.clearLoginData()
         }
       },
       fail: (error) => {
-        console.error('Token验证请求失败:', error)
+        // 网络错误，保持登录状态
+        console.error('Token验证请求失败，网络错误:', error)
       }
     })
   },

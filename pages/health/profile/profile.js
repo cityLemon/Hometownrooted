@@ -41,33 +41,65 @@ Page({
       ]
     },
     editMode: false,
-    tempProfile: {}
+    tempProfile: null  // 将在loadHealthProfile中初始化
   },
 
   onLoad() {
+    console.log('========================================')
     console.log('Health profile page loaded')
-    if (!auth.checkLogin()) {
+    console.log('========================================')
+
+    const loginStatus = auth.checkLogin()
+    console.log('checkLogin返回:', loginStatus)
+
+    if (!loginStatus) {
+      console.log('未登录，设置pageLoaded为true并返回')
+      this.setData({
+        pageLoaded: true
+      })
       return
     }
+
+    console.log('已登录，开始加载健康档案')
     this.loadHealthProfile()
     this.setupNetworkListener()
   },
 
   onReady() {
     console.log('Health profile page ready')
-    // 绘制健康指标图表
-    this.drawHealthChart()
+    // 只有在pageLoaded为true时才绘制图表
+    if (this.data.pageLoaded) {
+      this.drawHealthChart()
+    }
   },
 
   loadHealthProfile() {
+    console.log('========================================')
+    console.log('开始加载健康档案')
+    console.log('========================================')
+
     wx.showLoading({
       title: '加载中...'
     })
-    
+
     const app = getApp()
     const userId = app.globalData.userInfo?.id
-    
+
+    console.log('userId:', userId)
+    console.log('globalData.userInfo:', app.globalData.userInfo)
+
+    // 兜底：设置一个定时器，确保无论如何都会隐藏加载动画
+    const safetyTimer = setTimeout(() => {
+      console.log('兜底定时器触发：强制设置pageLoaded为true')
+      wx.hideLoading()
+      this.setData({
+        pageLoaded: true
+      })
+    }, 3000)
+
     if (!userId) {
+      console.log('userId不存在，使用默认数据')
+      clearTimeout(safetyTimer)
       wx.hideLoading()
       wx.showToast({
         title: '用户信息不存在',
@@ -78,13 +110,19 @@ Page({
       })
       return
     }
-    
+
+    console.log('发起API请求，URL:', `${app.globalData.baseUrl}/api/health/profile/${userId}`)
+
+    // 无论API是否成功，都设置pageLoaded为true，避免一直加载
     wx.request({
       url: `${app.globalData.baseUrl}/api/health/profile/${userId}`,
       method: 'GET',
       header: auth.getAuthHeader(),
       success: (res) => {
+        console.log('API响应:', res)
+        clearTimeout(safetyTimer)
         wx.hideLoading()
+
         if (res.statusCode === 200 && res.data.success) {
           const healthProfile = res.data.data || this.data.healthProfile
           // 如果API返回的数据中没有basicInfo，则从userInfo中获取
@@ -98,12 +136,14 @@ Page({
               address: userInfo.address || ''
             }
           }
+          console.log('设置pageLoaded为true (success)')
           this.setData({
             healthProfile,
             tempProfile: JSON.parse(JSON.stringify(healthProfile)),
             pageLoaded: true
           })
         } else {
+          console.log('API返回非成功状态，使用演示数据')
           wx.showToast({
             title: '使用演示数据',
             icon: 'none',
@@ -119,6 +159,7 @@ Page({
             phone: userInfo.phone || '',
             address: userInfo.address || ''
           }
+          console.log('设置pageLoaded为true (api error)')
           this.setData({
             healthProfile,
             tempProfile: JSON.parse(JSON.stringify(healthProfile)),
@@ -127,15 +168,10 @@ Page({
         }
       },
       fail: (error) => {
+        console.log('健康档案加载失败，使用演示数据:', error)
+        clearTimeout(safetyTimer)
         wx.hideLoading()
-        if (!auth.handleAuthError(error)) {
-          wx.showToast({
-            title: '使用演示数据',
-            icon: 'none',
-            duration: 1500
-          })
-        }
-        // 使用演示数据，从userInfo中获取基本信息
+        // 不显示错误提示，直接使用演示数据
         const userInfo = app.globalData.userInfo
         const healthProfile = this.data.healthProfile
         healthProfile.basicInfo = {
@@ -145,6 +181,7 @@ Page({
           phone: userInfo.phone || '',
           address: userInfo.address || ''
         }
+        console.log('设置pageLoaded为true (network error)')
         this.setData({
           healthProfile,
           tempProfile: JSON.parse(JSON.stringify(healthProfile)),

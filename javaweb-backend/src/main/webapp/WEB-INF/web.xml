@@ -45,7 +45,16 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>HealthServlet</servlet-name>
-        <url-pattern>/api/health</url-pattern>
+        <url-pattern>/api/health/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ServiceServlet</servlet-name>
+        <servlet-class>com.hometownrooted.servlet.ServiceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServiceServlet</servlet-name>
+        <url-pattern>/api/convenience/*</url-pattern>
     </servlet-mapping>
 
     <servlet>

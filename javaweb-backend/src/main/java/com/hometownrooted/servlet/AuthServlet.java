@@ -25,6 +25,8 @@ public class AuthServlet extends HttpServlet {
             login(req, resp);
         } else if ("/register".equals(pathInfo)) {
             register(req, resp);
+        } else if ("/validate".equals(pathInfo)) {
+            validate(req, resp);
         } else {
             JsonUtil.writeJsonResponse(resp, JsonUtil.error("Invalid request path"));
         }
@@ -168,6 +170,68 @@ public class AuthServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             JsonUtil.writeJsonResponse(resp, JsonUtil.error("注册失败: " + e.getMessage()));
+        }
+    }
+
+    private void validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String authHeader = req.getHeader("Authorization");
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            JsonUtil.writeJsonResponse(resp, JsonUtil.error("缺少或无效的Authorization头"));
+            return;
+        }
+        
+        String token = authHeader.substring(7).trim();
+        
+        try {
+            // 简单验证token格式：token_userId_timestamp
+            if (!token.startsWith("token_")) {
+                JsonUtil.writeJsonResponse(resp, JsonUtil.error("无效的token格式"));
+                return;
+            }
+            
+            String[] parts = token.split("_");
+            if (parts.length < 3) {
+                JsonUtil.writeJsonResponse(resp, JsonUtil.error("token格式错误"));
+                return;
+            }
+            
+            String userIdStr = parts[1];
+            int userId = Integer.parseInt(userIdStr);
+            
+            // 验证用户是否存在
+            User user = userDAO.findById(userId);
+            if (user == null) {
+                JsonUtil.writeJsonResponse(resp, JsonUtil.error("用户不存在"));
+                return;
+            }
+            
+            if (user.getStatus() == 0) {
+                JsonUtil.writeJsonResponse(resp, JsonUtil.error("账号已被禁用"));
+                return;
+            }
+            
+            // 构建用户信息
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("id", user.getId());
+            userInfo.put("username", user.getUsername());
+            userInfo.put("role_name", user.getRoleName());
+            userInfo.put("phone", user.getPhone());
+            userInfo.put("gender", user.getGender());
+            userInfo.put("age", user.getAge());
+            userInfo.put("address", user.getAddress());
+            userInfo.put("avatar", user.getAvatar());
+            
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("success", true);
+            responseData.put("userInfo", userInfo);
+            
+            JsonUtil.writeJsonResponse(resp, JsonUtil.success("Token验证成功", responseData));
+        } catch (NumberFormatException e) {
+            JsonUtil.writeJsonResponse(resp, JsonUtil.error("无效的用户ID格式"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JsonUtil.writeJsonResponse(resp, JsonUtil.error("Token验证失败: " + e.getMessage()));
         }
     }
 }
